@@ -1,24 +1,16 @@
 <template>
   <div>
-    <Header></Header>
-    <div class="article_list">
-      <ul>
-        <li v-for="i in list">
-          <time v-text="$utils.getTime(i.create_at)"></time>
-          <router-link :to="'/content/' + i.id">
-            {{ i.title }}
-          </router-link>
-        </li>
-      </ul>
-    </div>
-    <Footer></Footer>
+    <myHeader></myHeader>
+    <!-- <myContent></myContent> -->
+    <myFooter></myFooter>
   </div>
 </template>
 <script>
-import Header from '../components/header.vue'
-import Footer from '../components/footer.vue'
+import myHeader from '../components/header.vue'
+import myContent from '../components/content.vue'
+import myFooter from '../components/footer.vue'
 export default {
-  components: { Header, Footer },
+  components: { myHeader, myContent, myFooter },
   data () {
     return {
       list: []

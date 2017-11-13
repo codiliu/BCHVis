@@ -1,6 +1,6 @@
 # vue demo
 
-> Template demo
+> Template demo by yuechenglei
 
 ## Build Setup
 

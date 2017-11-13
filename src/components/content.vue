@@ -1,11 +1,21 @@
+<!-- 网络请求，vuex，vuerouter的使用 -->
 <template>
   <div>
     <myHeader></myHeader>
     <p>content</p>
     <h2>{{index}}</h2>
     <h2>{{singer}}</h2>
-    <h2>{{add()}}</h2>
-    <button @click="addIndex">click</button>
+     <button @click="addIndex">click</button>
+    <div class="article_list">
+      <ul>
+        <li v-for="i in list">
+          <time v-text="$utils.getTime(i.create_at)"></time>
+          <router-link :to="'/content/' + i.id">
+            {{ i.title }}
+          </router-link>
+        </li>
+      </ul>
+    </div>
     <myFooter></myFooter>
   </div>
 </template>
@@ -19,17 +29,20 @@ export default {
   methods:{
 
   ...mapActions(['addIndex',]),
-  add(){
-    return $("#app").text()
-  },
+  getData () { //网络请求
+      this.$api.get('topics', null, r => {
+        this.list = r.data
+      })
+    }
   },
   computed:mapGetters(['singer','index']),
   data () {
-    return {
-      id: this.$route.params.id,
+      return {
+      list: []
     }
   },
   created () {
-  },
+    this.getData()
+  }
 }
 </script>
