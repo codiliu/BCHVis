@@ -3,21 +3,16 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './vuex/index'; //引入store
+import store from './vuex/index'; //store
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue);
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-
-
-// 引用API文件
+// API
 import api from './api/index.js'
-// 将API方法绑定到全局
+// make global
 Vue.prototype.$api = api
-
-// 引用工具文件
 import utils from './commons/utils.js'
-// 将工具方法绑定到全局
 Vue.prototype.$utils = utils
 
 
