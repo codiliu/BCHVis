@@ -1,14 +1,14 @@
 <template>
   <div>
     <myHeader></myHeader>
-    <!-- <myContent></myContent> -->
+    <myContent></myContent>
     <myFooter></myFooter>
   </div>
 </template>
 <script>
 import myHeader from '../components/header.vue'
-import myContent from '../components/content.vue'
-import myFooter from '../components/footer.vue'
+// import myContent from '../components/content.vue'
+import myFooter from '../components/map.vue'
 export default {
   components: { myHeader, myContent, myFooter },
   data () {

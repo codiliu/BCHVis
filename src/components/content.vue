@@ -16,16 +16,16 @@
         </li>
       </ul>
     </div>
-    <myFooter></myFooter>
+    <!-- <myFooter></myFooter> -->
   </div>
 </template>
 <script>
 import myHeader from '../components/header.vue'
-import myFooter from '../components/footer.vue'
+// import myFooter from '../components/map.vue'
 import {mapActions,mapGetters} from 'vuex'
 import {singer} from '../vuex/getters'
 export default {
-  components: { myHeader, myFooter },
+  components: { myHeader},
   methods:{
 
   ...mapActions(['addIndex',]),

@@ -25,7 +25,7 @@
 <script>
 
 import myHeader from './components/header.vue'
-import myFooter from './components/footer.vue'
+import myFooter from './components/map.vue'
 export default {
   name: 'app',
   components: { myHeader, myFooter},
