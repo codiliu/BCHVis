@@ -1,7 +1,11 @@
 # vue demo
 
 > Template demo by yuechenglei
-
+Vuex 状态管理模式。
+VueRouter2 实现单页面项目前端路由组织。
+webpack 项目打包以及编译工具。
+Axios 接口请求工具。
+使用npm进行前端包管理器以及vue-cli脚手架构建。
 ## Build Setup
 
 ``` bash
@@ -26,10 +30,12 @@ npm run e2e
 # run all tests
 npm test
 ```
+## 目录结构
+![Alt text](./static/images/vuedirectory.png?raw=true "vuedirectory")
 
-
+## 初始界面
 ![Alt text](./static/images/viewinit.png?raw=true "viewinit")
-<!-- ![Alt text](./static/images/vuedirectory.png?raw=true "vuedirectory") -->
+
 
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
