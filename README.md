@@ -27,4 +27,9 @@ npm run e2e
 npm test
 ```
 
+
+![Alt text](./static/images/viewinit.png?raw=true "viewinit")
+<!-- ![Alt text](./static/images/vuedirectory.png?raw=true "vuedirectory") -->
+
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
