@@ -1,6 +1,7 @@
 # vue demo
 
 > Template demo by yuechenglei
+
 Vuex 状态管理模式。
 VueRouter2 实现单页面项目前端路由组织。
 webpack 项目打包以及编译工具。
