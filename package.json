@@ -1,7 +1,7 @@
 {
-  "name": "vue-demo",
+  "name": "vue-flight",
   "version": "1.0.0",
-  "description": "template",
+  "description": "boeing-flight",
   "author": "pkuvis",
   "private": true,
   "scripts": {
@@ -16,9 +16,12 @@
   "dependencies": {
     "bootstrap": "^4.0.0-beta.2",
     "bootstrap-vue": "^1.0.2",
-    "d3": "^4.11.0",
+    "d3-3": "0.0.0",
+    "d3-tip": "^0.7.1",
+    "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "leaflet": "^1.2.0",
+    "leafletjs-canvas-overlay": "^1.0.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

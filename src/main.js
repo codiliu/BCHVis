@@ -10,6 +10,8 @@ import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'font-awesome/css/font-awesome.css';
+// import './assets/iconfont.css';
 // API
 import api from './api/index.js'
 // make global

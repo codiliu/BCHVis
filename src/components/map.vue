@@ -1,42 +1,42 @@
 <template>
-  <div ref="mapContainer">
-   <!-- <div ref:"mapContiner"> -->
-  
+  <div>
+  <div class = 'mapContainer' ref="mapContainer">
+    <!-- <div ref:"mapContiner"> -->
+  </div>
+  <div id="ProjectTitle">
+    Air Traffic Control Visual Analysis System
+  </div>
+  <MapControl id="mapControl"> </MapControl>
   </div>
 </template>
-
 <script>
 import Map from '../charts/MapView'
-import $ from 'jquery'
+import MapControl from './mapcontrol.vue'
+// import $ from 'jquery'
 export default {
-  // components: { myHeader, myContent, myFooter },
-  data () {
+  components: { MapControl },
+  data() {
     return {
       list: []
     }
   },
-  mounted () {
+  mounted() {
     this.getData();
     // console.log(this.$refs.mainTable)
-    console.log(this.$refs.mapContainer)
+    // console.log(this.$refs.mapContainer)
 
     this.Map = new Map(this.$refs.mapContainer)
   },
   methods: {
-    getData () {
+    getData() {
       // this.$api.get('topics', null, r => {
       //   this.list = r.data
       // })
     }
   }
 }
+
 </script>
-
-<style>
-  /*.article_list {margin: auto;}*/
-
-  #mapContainer{
-  	height: 100%;
-  	width: 100%;
-  }
+<style lang="less">
+@import "../style/map.less";
 </style>

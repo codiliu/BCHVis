@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import myHeader from '../components/header.vue'
+import myHeader from '../components/map.vue'
 import myContent from '../components/content.vue'
 import myFooter from '../components/map.vue'
 export default {
