@@ -34,9 +34,6 @@ npm test
 ## 目录结构
 ![Alt text](./static/images/vuedirectory.png?raw=true "vuedirectory")
 
-## 初始界面
-![Alt text](./static/images/viewinit.png?raw=true "viewinit")
-
 
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
