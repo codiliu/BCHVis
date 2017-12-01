@@ -27,6 +27,8 @@ export default {
 <style lang="less">
 @import "./style/base/style.less";
 @import "./style/base/base.vars.less";
+@import "./style/base/iview.less";
+
 #app {
   position: absolute;
   height: 100%;

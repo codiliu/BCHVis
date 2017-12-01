@@ -1,11 +1,11 @@
-# vue demo
+# Boeing flight
 
-> Template demo by yuechenglei
-
+> Boeing flight
 Vuex 状态管理模式。
 VueRouter2 实现单页面项目前端路由组织。
 webpack 项目打包以及编译工具。
 Axios 接口请求工具。
+UI bootstrap and Element UI and font awesome and iconfont
 使用npm进行前端包管理器以及vue-cli脚手架构建。
 ## Build Setup
 

@@ -11,7 +11,7 @@ import 'leaflet/dist/leaflet.css'
 export default class {
   constructor(el) {
     this.el = el
-    console.log(el)
+    // console.log(el)
     this.init()
   }
 
