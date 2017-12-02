@@ -21,6 +21,9 @@ import myMap from './components/map.vue'
 export default {
   name: 'app',
   components: { myTimeline, myMap },
+  created () {
+    //load the data. add shared data to Store 
+  }
 }
 
 </script>

@@ -32,6 +32,8 @@ export default class {
     var style = "dark"; // emerald,light,dark
     var tileLayer = L.tileLayer('https://api.mapbox.com/v4/mapbox.' + style + '/{z}/{x}/{y}.png?access_token=' + accessToken);
 
+    this.map.scrollWheelZoom.disable();
+
     tileLayer.addTo(this.map);
     return this
   }

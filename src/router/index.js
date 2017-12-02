@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/index'
-import Content from '@/components/content'
+// import Index from '@/components/index'
+// import Content from '@/components/content'
 
 Vue.use(Router)
 
@@ -14,10 +14,10 @@ export default new Router({
     //   }
     {
       path: '/',
-      component: Index
+      // component: Index
     }, {
       path: '/content/:id',
-      component: Content
+      // component: Content
     }
 
 

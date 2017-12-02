@@ -10,9 +10,29 @@ import store from './vuex/index'; //store
 import 'font-awesome/css/font-awesome.css';
 import "../static/css/iconfont.css";
 
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
-Vue.use(iView);
+import iView from 'iview'
+import 'iview/dist/styles/iview.css'
+Vue.use(iView)
+
+//loadingBar
+router.beforeEach((to, from, next) => {
+  iView.LoadingBar.start();
+  next();
+});
+router.afterEach(route => {
+  iView.LoadingBar.finish();
+});
+// export default {
+//   start() {
+//     iView.LoadingBar.start();
+//   },
+//   finish() {
+//     iView.LoadingBar.finish();
+//   },
+//   error() {
+//     iView.LoadingBar.error();
+//   }
+// }
 // API
 import api from './api/index.js'
 // make global

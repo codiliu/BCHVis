@@ -4,8 +4,7 @@ html,
 body {
   position: absolute;
   top: 0;
-  bottom: 0;
-  //height: 1300px;
+  bottom: 0; //height: 1300px;
   left: 0;
   right: 0;
   margin: 0;
@@ -17,22 +16,29 @@ body {
     cursor: pointer;
   }
 }
+
 .comps-title {
   padding-left: 6px;
   border-left: 3px solid #1fa2d6;
   font-weight: bold;
 }
+
 .label-color {
   color: @color-text;
   font-weight: bold;
 }
 
 div {
-    z-index: 1;
+  z-index: 1;
 }
 
 td {
-text-align:center; /*设置水平居中*/
-vertical-align:middle;/*设置垂直居中*/
+  text-align: center;
+  /*设置水平居中*/
+  vertical-align: middle;
+  /*设置垂直居中*/
 }
 
+.small-font {
+  -webkit-transform: scale(0.9);
+}

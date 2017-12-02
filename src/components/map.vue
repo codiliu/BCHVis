@@ -1,12 +1,28 @@
 <template>
   <div>
-  <div class = 'mapContainer' ref="mapContainer">
-    <!-- <div ref:"mapContiner"> -->
-  </div>
-  <div id="ProjectTitle">
-    Air Traffic Control Visual Analysis System
-  </div>
-  <MapControl id="mapControl"> </MapControl>
+    <div class='mapContainer' ref="mapContainer">
+      <!-- <div ref:"mapContiner"> -->
+    </div>
+    <!--  -->
+    <div id="ProjectTitle">
+      Air Traffic Control Visual Analysis System
+    </div>
+    <!--  -->
+    <div id="AirportPanel" style="text-align: center;">
+      <div id="CenterAirport">ZBAA</div>
+      <div class="small-font">Beijing Capital International Airport</div>
+      <div id="mapTimeText">
+        &nbsp;<span id="mapDate"></span>
+        <span id="mapTime"></span>&nbsp;
+      </div>
+    </div>
+    <!--  -->
+    <div id="fixptsHistogram">
+      <div style="background-color: #000000;">FixPts Passing <i class="fa fa-caret-down" id="FixptsHistogramShow" style="cursor:pointer;"></i></div>
+      <div id="fixptsHistogram_real"></div>
+    </div>
+    <!--  -->
+    <MapControl id="mapControl"> </MapControl>
   </div>
 </template>
 <script>
@@ -39,4 +55,5 @@ export default {
 </script>
 <style lang="less">
 @import "../style/map.less";
+
 </style>

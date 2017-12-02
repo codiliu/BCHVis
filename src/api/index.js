@@ -33,6 +33,8 @@ function filterNull(o) {
 */
 
 function apiAxios(method, url, params, success, failure) {
+
+  // this.$Loading.start();
   if (params) {
     params = filterNull(params)
   }
@@ -48,18 +50,21 @@ function apiAxios(method, url, params, success, failure) {
       if (res.data.success === true) {
         if (success) {
           success(res.data)
+          // this.$Loading.finish();
         }
       } else {
         if (failure) {
           failure(res.data)
         } else {
           window.alert('error: ' + JSON.stringify(res.data))
+          // this.$Loading.error();
         }
       }
     })
     .catch(function(err) {
       let res = err.response
       if (err) {
+        // this.$Loading.error();
         window.alert('api error, HTTP CODE: ' + res.status)
       }
     })
