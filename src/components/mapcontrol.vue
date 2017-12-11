@@ -150,12 +150,12 @@ export default {
     getData() {
       console.log("getData")
       //LoadingBar
-      this.$Loading.start();
-      this.$api.get('topics', null, r => {
-        // this.list = r.data
-        console.log(r.data)
-        this.$Loading.finish();
-      })
+      // this.$Loading.start();
+      // this.$api.get('topics', null, r => {
+      //   // this.list = r.data
+      //   console.log(r.data)
+      //   this.$Loading.finish();
+      // })
     },
     hideFormat() {
       return null;
