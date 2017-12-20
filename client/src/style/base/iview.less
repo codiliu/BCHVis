@@ -1,0 +1,124 @@
+/**
+* author: yuechenglei
+* describe: 自定义修改 for iView
+*/
+
+@import "./base.vars.less";
+
+//small btn
+.ivu-btn-small:focus,
+.ivu-btn-small:hover {
+  color: @color-grey-2;
+  background-color: @color-grey-0;
+  border-color: @color-grey-1;
+}
+.ivu-btn-small {
+  padding: 0px 2px;
+}
+
+.ivu-btn-group-small .ivu-btn {
+    padding: 1px 5px;
+    background: #fff;
+}
+.ivu-btn .ivu-icon {
+    padding: 3px 1px;
+}
+.ivu-btn-group-small .ivu-btn:focus,
+.ivu-btn-group-small .ivu-btn:hover {
+  // color: @color-grey-2;
+  // background-color: @color-grey-0;
+  // border-color: @color-grey-1;
+  // border:2px;
+  color: @color-grey-2;
+  background-color: @color-grey-0;
+  border-color: @color-grey-1;
+}
+
+//input
+.ivu-input:hover,
+.ivu-input:focus
+{
+    border-color: @color-grey-2;
+    // border: 1px;
+    box-shadow: 0px 0px 3px 0px @color-grey-1;
+}
+
+//dropdown
+.ivu-dropdown-menu {
+   min-width: 0px;
+}
+.ivu-dropdown-item {
+    padding: 2px 8px;
+}
+
+//slider
+.ivu-slider-wrap{
+	height: 3px;
+	margin: 6px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 1px;
+}
+.ivu-slider-bar {
+    height: 3.2px;
+    background: #737373;
+}
+.ivu-slider-button {
+    width: 12px;
+    height: 12px;
+    border: 2px solid @color-grey-2;
+    // border-radius: 50%;
+    // vertical-align: middle;
+    background: @color-grey-0;
+    transition: all .2s linear;
+}
+
+.ivu-slider-button-dragging, 
+.ivu-slider-button:hover {
+	background: @color-grey-1;
+    border-color: @color-grey-2;
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+}
+
+//select 下拉
+.ivu-select{
+	width: auto;
+	font-size: 1rem;
+}
+selection .ivu-select-placeholder, .ivu-select-single 
+.ivu-select-selection .ivu-select-selected-value {
+    padding-left: 5px;
+    padding-right: 20px;
+}
+
+.ivu-select-item-selected, .ivu-select-item-selected:hover{
+	// color:@color-grey-0;
+    background: @color-grey-1;
+}
+
+.ivu-select-item{
+	padding: 2px 8px;
+}
+
+//badge
+.ivu-badge-count {
+    position: absolute;
+    -ms-transform: translateX(50%);
+    transform: translateX(50%);
+    top: -10px;
+    right: 0;
+    height: auto;
+    border-radius: 10px;
+    border:0;
+    color: #fff;
+    line-height: 18px;
+    text-align: center;
+    padding: 0 2px;
+    font-size: 10px;
+    white-space: nowrap;
+    -ms-transform-origin: -10% center;
+    transform-origin: -10% center;
+    z-index: 10;
+    box-shadow: 0 0 0 0px #fff; 
+}
