@@ -7,6 +7,7 @@
 
 import d3 from 'd3'
 import config from '../commons/config'
+import utils from '../commons/utils'
 let { A_D, fixpot_total, fixpot_arrival, fixpot_departure } = config
 
 // A_D: ['dep', 'arr'],
@@ -18,14 +19,14 @@ export default class {
   constructor(el) {
       this.el = el
     },
-//change
+    //change
     dataProcess() {
       var self = this;
       var fixpot_filter = Datacenter.get("fixpot_filter");
       // console.warn(fixpot_filter);
 
       var timestamp = Config.get("curtime")
-      var dateStr = timeuitl.formateDate(timestamp);
+      var dateStr = utils.formateDate(timestamp);
 
       var fixpot_histogram = { 'dep': {}, 'arr': {} };
 
@@ -66,7 +67,7 @@ export default class {
     },
     histogram_render(data) {
       var self = this;
-      $('.histogram_simple_div').remove();
+      d3.selectAll('.histogram_simple_div').remove();
 
       var number = self.fixpot_total.length;
       var div_width = $('#fixptsHistogram_real').width(),
