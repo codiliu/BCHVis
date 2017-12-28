@@ -1,10 +1,24 @@
 import * as types from './types';
 export default {
-  [types.NEXTSONG](state) {},
-  [types.PREVSONG](state, obj) {
-    state.playing = obj
+  [types.DAY_STA] (state, daysta) {
+    state.daysta = daysta
   },
-  [types.ADDINDEX](state) {
-    state.currentIndex += 1;
+  [types.MINUTE_STA] (state, minutesta) {
+    state.minutesta = minutesta
+  },
+  [types.AIRPORTSELECTED] (state, airportSelected) {
+    state.airportSelected = airportSelected
+  },
+  [types.TRAJDATA] (state, trajData) {
+    state.trajData = trajData
+  },
+  [types.TIMELINETOPRANGE] (state, timelineTopRange) {
+    state.timelineTopRange = timelineTopRange
+  },
+  [types.CURTIME] (state, curtime) {
+    state.curtime = curtime
+  },
+  [types.SLIDINGWINDOWSIZE] (state, slidingwindowsize) {
+    state.slidingwindowsize = slidingwindowsize
   }
 }

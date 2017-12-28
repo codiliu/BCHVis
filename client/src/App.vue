@@ -19,39 +19,27 @@
 import $ from 'jquery'
 import myTimeline from './components/timeline.vue'
 import myMap from './components/map.vue'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'app',
-  components: { myTimeline, myMap },
-  created () {
 
-    // var constraint = {};
-    // var formData = new FormData();
-    // constraint['databasetype'] = 'mongodb';
-    // constraint['datasetname'] = 'trajectory';
-    // constraint['curtime'] = 1481990400000;
-    // constraint['duration'] = 1
-    // constraint=JSON.stringify(constraint)
-    // formData.append("constraint", constraint);
-    // $.ajax({
-    //   url: 'http://127.0.0.1:22028/query/curtime',
-    //   type: 'POST',
-    //   dataType: 'JSON',
-    //   data: formData,
-    //   processData: false,
-    //   contentType: false,
-    //   success: function (response) {
-    //     var data = response.data
-    //     if (data) {
-    //       console.log("data111",data) 
-    //     }
-    //   },
-    //   error: function (jqXHR, textStatus, errorMessage) {
-    //     console.log('errorMessage') // Optional
-    //   }
-    // })
+  components: { myTimeline, myMap },
+  // computed(){
+  //   ...mapActions(['setDaySta']),
+  // },
+  methods:mapActions(['setDaySta','setTrajData']),
+  //computed:mapGetters(['getDaySta']),
+  created () {
+    
+     // console.log('this.getDaySta(): ', this.getDaySta())
+
 
     console.log("data loading.....")
     var self = this
+   // self.setDaySta(11221)
+
+    //self.setDaySta(111)
+    //self.getDaySta()
     connectDB()
     getMonthSta(147525120000, 14832000000000)
     getDaySta('*')
@@ -86,7 +74,7 @@ export default {
       constraint['dateTime'] = dateTime
       constraint = JSON.stringify(constraint)      
       formData.append('constraint', constraint)
-      sendUrl ('query/daysta', formData, 'daydata')
+      sendUrl ('query/daysta', formData, 'daysta')
 
       // self.$api.post('http://127.0.0.1:22028/'+'db/daysta',formData, r => {
       //   console.log("daydata: ",r)
@@ -109,14 +97,46 @@ export default {
       console.log(Url)
       self.$api.post(Url,formData, d => {
         var data=d.data
-        // if (v_id === 'cdm' || v_id === 'curtimedata' || v_id === 'curtimedatahistogram' || v_id === 'filterCircle' || v_id === 'callsign'){
-        //   data = JSON.parse(data.replace(/\bNaN\b/g, 'null'))
-        // } else {
-        //   data = JSON.parse(data)
-        // }
         data = JSON.parse(data) 
-        console.log('------get '+v_id+"data")
-        console.log(data)
+        console.log('------get '+v_id+" data")
+        switch(v_id){
+          case 'monthsta':
+            break
+          case 'daysta':
+            //self.setDaySta(data['PEK'])
+            break
+          case 'curtimedata':
+            let trajData = data['trajData']
+            let airportSelected = 'PEK'
+            let arrTrajs = []
+            let depTrajs = []
+            trajData.forEach(function (d) {
+              try {
+                var origin = d['origin']['code']['iata']
+                var destination = d['destination']['code']['iata']
+                if (origin == airportSelected) {
+                  depTrajs.push(d)
+                }
+                if (destination == airportSelected) {
+                  arrTrajs.push(d)
+                }
+              } catch (e) {
+                if (airportSelected == 'PEK') {
+                  if (d['arr'] == 1) {
+                    arrTrajs.push(d)
+                  }
+                  if (d['arr'] ==0 ) {
+                    depTrajs.push(d)
+                  }
+                }
+              }
+            })
+            trajData = {'arrTrajs': arrTrajs, 'depTrajs': depTrajs}
+            console.log(trajData)
+            self.setTrajData(trajData)
+            break
+        }
+        console.log(data)   
       })
     }
          
