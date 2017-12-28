@@ -1,6 +1,3 @@
-export const NEXTSONG ='NEXTSONG';
-export const PREVSONG ='PREVSONG';
-export const ADDINDEX ='ADDINDEX';
 export const SWITCH_MONTH = 'SWITCH_MONTH';
 export const DAY_STA = 'DAY_STA';
 export const MINUTE_STA = 'MINUTE_STA';

@@ -1,7 +1,5 @@
 import { playMode } from '../commons/config'
 const state = {
-  mode: playMode.sequence,
-  currentIndex: -1,
   month: 4,
   timelineTopRange: [Date.parse(new Date(2016, 11, 18)), Date.parse(new Date(2016, 11, 19))],
   daysta: [],

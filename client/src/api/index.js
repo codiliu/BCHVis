@@ -1,5 +1,5 @@
 // 配置API接口地址
-var root = 'https://cnodejs.org/api/v1' 
+var root = 'http://127.0.0.1:22028/' 
 
 //var root = 'http://www.zhimengzhe.com/Javascriptjiaocheng/390541.html'
 // 引用axios
@@ -81,7 +81,7 @@ function apiAxios(method, url, params, success, failure) {
       let res = err.response
       if (err) {
         // this.$Loading.error();
-        console.log('api error, HTTP CODE: ' + res.status)
+        console.log('api error, HTTP CODE: ' + res)
       }
     })
 }
