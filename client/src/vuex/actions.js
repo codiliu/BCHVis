@@ -5,7 +5,7 @@ export default {
   	console.log("setDaySta action: ", daysta)
     commit(types.DAY_STA, daysta)
   },
-  setTrajData({ commit, state }, trajData) {
+  setTrajData({ commit }, trajData) {
   	console.log("setTrajData action: ", trajData)
     commit(types.TRAJDATA, trajData)
   },

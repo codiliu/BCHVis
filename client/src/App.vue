@@ -24,11 +24,23 @@ export default {
   name: 'app',
 
   components: { myTimeline, myMap },
-  computed: {
-    ...mapActions(['setDaySta', 'setTrajData']),
-  },
+  // computed: {
+  //   ...mapActions(['setDaySta', 'setTrajData']),
+  // },
   // methods:mapActions(['setDaySta','setTrajData']),
   //computed:mapGetters(['getDaySta']),
+  methods: {
+    sleep(time) {
+      var now = new Date();
+      var exitTime = now.getTime() + time;
+      while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+          return;
+      }
+    },
+    ...mapActions(['setDaySta', 'setTrajData']),
+  },
   async created() {
 
     // console.log('this.getDaySta(): ', this.getDaySta())
@@ -45,6 +57,7 @@ export default {
     await getMonthSta(147525120000, 14832000000000)
     await getDaySta('*')
     await getCurtime(1481990400000, 1)
+    // this.sleep(1000)
 
     this.$Loading.finish();
 
@@ -139,6 +152,8 @@ export default {
             })
             trajData = { 'arrTrajs': arrTrajs, 'depTrajs': depTrajs }
             console.log(trajData)
+
+            // self.$store.dispatch('setTrajData',trajData)
             self.setTrajData(trajData)
             break
         }
