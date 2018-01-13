@@ -34,7 +34,7 @@ module.exports = {
     //配置 webpack 将接口代理到本地
     proxyTable: {
       '/topics': {
-        target: 'https://cnodejs.org/api/v1', // 接口的域名  
+        target: 'http://127.0.0.1:22028/', // 接口的域名  
         changeOrigin: true,
         pathRewrite:{
             '^/topics':''            

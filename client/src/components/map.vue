@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class='mapContainer' ref="mapContainer">
+    <div id='mapContainer' ref="mapContainer">
       <!-- <div ref:"mapContiner"> -->
     </div>
     <!--  -->
@@ -26,8 +26,10 @@
   </div>
 </template>
 <script>
-import Map from '../charts/MapView'
+// import Map from '../charts/MapView'
+import MapGL from '../charts/MapGL'
 import MapControl from './mapcontrol.vue'
+import { mapActions, mapGetters } from 'vuex'
 // import $ from 'jquery'
 export default {
   components: { MapControl },
@@ -37,23 +39,53 @@ export default {
     }
   },
   mounted() {
-    this.getData();
-    // console.log(this.$refs.mainTable)
+    // this.getData();
+    console.log("map loading.....")
+    // console.log(this.list)
+    // console.log(this.trajData)
     // console.log(this.$refs.mapContainer)
 
-    this.Map = new Map(this.$refs.mapContainer)
+    // this.Map = new Map(this.$refs.mapContainer)
+    // if(this.trajData.length!=0){
+    //   // this.Map.drawTraj(this.trajData)
+    //   this.Map.initLayers(this.trajData)
+    // }
+
+    this.Map = new MapGL("mapContainer")
+    if (this.trajData.length != 0) {
+      this.Map.drawTraj(this.trajData)
+      // this.Map.initLayers(this.trajData)
+    }
   },
+  computed: {
+    ...mapGetters({
+      trajData: 'getTrajData'
+    }),
+
+  },
+  watch: {
+    trajData: function(val) {
+      // Our fancy notification (2).
+      console.log('trajdata change')
+      console.log(val)
+      // this.Map.initLayers(val)
+
+      this.Map.drawTraj(val)
+
+    }
+  },
+
   methods: {
     getData() {
-      // this.$api.get('topics', null, r => {
-      //   this.list = r.data
-      // })
-    }
+      this.list = this.getTrajData
+      console.log(this.list)
+    },
   }
 }
 
 </script>
 <style lang="less">
 @import "../style/map.less";
+@import "../style/mapboxgl.less";
 
 </style>
