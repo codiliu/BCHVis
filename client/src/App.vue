@@ -22,20 +22,18 @@ import myMap from './components/map.vue'
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'app',
-
   components: { myTimeline, myMap },
-  // computed(){
-  //   ...mapActions(['setDaySta']),
-  // },
-  methods:mapActions(['setDaySta','setTrajData']),
+  methods: {
+    ...mapActions(['setMinuteSta', 'setDaySta','setTrajData']),
+  },
+  //
   //computed:mapGetters(['getDaySta']),
   created () {
-    
      // console.log('this.getDaySta(): ', this.getDaySta())
-
+    //console.log(mapActions)
 
     console.log("data loading.....")
-    var self = this
+    var self = this 
    // self.setDaySta(11221)
 
     //self.setDaySta(111)
@@ -64,17 +62,17 @@ export default {
       constraint['airport'] = airport
       constraint = JSON.stringify(constraint)      
       formData.append('constraint', constraint)
-      sendUrl ('query/monthsta', formData, 'monthsta')
+      sendUrl ('query/monthsta', formData, 'daysta')
     }
     function getDaySta (dateTime) {
       var constraint = {}
       var formData = new URLSearchParams();
       constraint['databasetype'] = 'mongodb'
-      constraint['datasetname'] = 'dayStaMulti'
+      constraint['datasetname'] = 'minuteStaMulti'
       constraint['dateTime'] = dateTime
       constraint = JSON.stringify(constraint)      
       formData.append('constraint', constraint)
-      sendUrl ('query/daysta', formData, 'daysta')
+      sendUrl ('query/daysta', formData, 'minutesta')
 
       // self.$api.post('http://127.0.0.1:22028/'+'db/daysta',formData, r => {
       //   console.log("daydata: ",r)
@@ -100,10 +98,15 @@ export default {
         data = JSON.parse(data) 
         console.log('------get '+v_id+" data")
         switch(v_id){
-          case 'monthsta':
-            break
           case 'daysta':
-            //self.setDaySta(data['PEK'])
+            self.setDaySta(data['PEK'])
+            break
+          case 'minutesta':
+              var temp =[] 
+              data['PEK'].forEach(function(d){
+                temp=temp.concat(d['data'])
+              })
+             self.setMinuteSta(temp)
             break
           case 'curtimedata':
             let trajData = data['trajData']
@@ -132,11 +135,10 @@ export default {
               }
             })
             trajData = {'arrTrajs': arrTrajs, 'depTrajs': depTrajs}
-            console.log(trajData)
+            //console.log(trajData)
             self.setTrajData(trajData)
             break
-        }
-        console.log(data)   
+        }  
       })
     }
          
@@ -153,7 +155,9 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
-
+  ul, ol {
+      padding-left: 5px;
+  }
   #content {
     position: absolute;
     width: 100%;

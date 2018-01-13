@@ -1,12 +1,13 @@
 import * as types from './types';
 
 export default {
+  setCurtime({ commit, state }, curtime) {
+    commit(types.CURTIME, curtime)
+  },
   setDaySta({ commit, state }, daysta) {
-  	console.log("setDaySta action: ", daysta)
     commit(types.DAY_STA, daysta)
   },
   setTrajData({ commit, state }, trajData) {
-  	console.log("setTrajData action: ", trajData)
     commit(types.TRAJDATA, trajData)
   },
   setMinuteSta({ commit, state }, minutesta) {
@@ -16,6 +17,7 @@ export default {
     commit(types.AIRPORTSELECTED, airportSelected)
   },
   setTimelineTopRange({ commit, state }, timelineTopRange) {
+  	//console.log('setTimelineTopRange action', timelineTopRange)
     commit(types.TIMELINETOPRANGE, timelineTopRange)
   },
   setCurtime({ commit, state }, curtime) {

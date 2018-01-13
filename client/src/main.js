@@ -12,6 +12,13 @@ import "../static/css/iconfont.css";
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+
+import '../plugins/uikit/css/uikit.min.css'
+
+import d3v4 from 'd3v4' 
+window.d3=d3v4.d3
+
+// window.d3d4 = d3v4 
 Vue.use(iView)
 
 //loadingBar

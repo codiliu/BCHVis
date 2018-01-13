@@ -23,6 +23,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'd3v4': path.resolve(__dirname, '../build/d3.v4.min.js'),
     }
   },
   module: {
