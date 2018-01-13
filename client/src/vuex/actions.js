@@ -7,7 +7,12 @@ export default {
   setDaySta({ commit, state }, daysta) {
     commit(types.DAY_STA, daysta)
   },
+<<<<<<< HEAD
   setTrajData({ commit, state }, trajData) {
+=======
+  setTrajData({ commit }, trajData) {
+  	console.log("setTrajData action: ", trajData)
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
     commit(types.TRAJDATA, trajData)
   },
   setMinuteSta({ commit, state }, minutesta) {

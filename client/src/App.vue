@@ -16,13 +16,14 @@
   </div>
 </template>
 <script>
-import $ from 'jquery'
+// import $ from 'jquery'
 import myTimeline from './components/timeline.vue'
 import myMap from './components/map.vue'
 import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'app',
   components: { myTimeline, myMap },
+<<<<<<< HEAD
   methods: {
     ...mapActions(['setMinuteSta', 'setDaySta','setTrajData']),
   },
@@ -35,69 +36,121 @@ export default {
     console.log("data loading.....")
     var self = this 
    // self.setDaySta(11221)
+=======
+  // computed: {
+  //   ...mapActions(['setDaySta', 'setTrajData']),
+  // },
+  // methods:mapActions(['setDaySta','setTrajData']),
+  //computed:mapGetters(['getDaySta']),
+  methods: {
+    sleep(time) {
+      var now = new Date();
+      var exitTime = now.getTime() + time;
+      while (true) {
+        now = new Date();
+        if (now.getTime() > exitTime)
+          return;
+      }
+    },
+    ...mapActions(['setDaySta', 'setTrajData']),
+  },
+  async created() {
+
+    // console.log('this.getDaySta(): ', this.getDaySta())
+
+
+    console.log("data loading.....")
+    var self = this
+    // self.setDaySta(11221)
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
 
     //self.setDaySta(111)
     //self.getDaySta()
-    connectDB()
-    getMonthSta(147525120000, 14832000000000)
-    getDaySta('*')
-    getCurtime(1481990400000, 1)
+    this.$Loading.start();
+    await connectDB()
+    await getMonthSta(147525120000, 14832000000000)
+    await getDaySta('*')
+    await getCurtime(1481990400000, 1)
+    // this.sleep(1000)
 
-    function getCurtime (curtime, duration) {
+    this.$Loading.finish();
+
+    function getCurtime(curtime, duration) {
       var constraint = {}
       var formData = new URLSearchParams();
       constraint['databasetype'] = 'mongodb'
       constraint['datasetname'] = 'trajectory'
       constraint['curtime'] = 1481990400000
       constraint['duration'] = 1
-      constraint = JSON.stringify(constraint)      
+      constraint = JSON.stringify(constraint)
       formData.append('constraint', constraint)
-      sendUrl ('query/curtime', formData, 'curtimedata')
+      sendUrl('query/curtime', formData, 'curtimedata')
     }
-    function getMonthSta (airport) {
+
+    function getMonthSta(airport) {
       var constraint = {}
       var formData = new URLSearchParams();
       constraint['databasetype'] = 'mongodb'
       constraint['datasetname'] = 'dayStaMulti'
       constraint['airport'] = airport
-      constraint = JSON.stringify(constraint)      
+      constraint = JSON.stringify(constraint)
       formData.append('constraint', constraint)
+<<<<<<< HEAD
       sendUrl ('query/monthsta', formData, 'daysta')
+=======
+      sendUrl('query/monthsta', formData, 'monthsta')
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
     }
-    function getDaySta (dateTime) {
+
+    function getDaySta(dateTime) {
       var constraint = {}
       var formData = new URLSearchParams();
       constraint['databasetype'] = 'mongodb'
       constraint['datasetname'] = 'minuteStaMulti'
       constraint['dateTime'] = dateTime
-      constraint = JSON.stringify(constraint)      
+      constraint = JSON.stringify(constraint)
       formData.append('constraint', constraint)
+<<<<<<< HEAD
       sendUrl ('query/daysta', formData, 'minutesta')
+=======
+      sendUrl('query/daysta', formData, 'daysta')
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
 
       // self.$api.post('http://127.0.0.1:22028/'+'db/daysta',formData, r => {
       //   console.log("daydata: ",r)
       // })
     }
-    function connectDB () {
+
+    function connectDB() {
       var formData = new URLSearchParams();
       formData.append('databasetype', 'mongodb')
       formData.append('dbName', 'flight')
       formData.append('port', 27066)
       formData.append('host', '192.168.10.9')
       // sendUrl ('db/connect', formData, 'connect')
-      self.$api.post('http://127.0.0.1:22028/'+'db/connect',formData, r => {
+      self.$api.post('db/connect', formData, r => {
         console.log("connect database success")
       })
     }
-    
-    function sendUrl (Url, formData, v_id){
-      Url='http://127.0.0.1:22028/'+Url
+
+    function sendUrl(Url, formData, v_id) {
+      // Url='http://127.0.0.1:22028/'+Url
       console.log(Url)
+<<<<<<< HEAD
       self.$api.post(Url,formData, d => {
         var data=d.data
         data = JSON.parse(data) 
         console.log('------get '+v_id+" data")
         switch(v_id){
+=======
+      self.$api.post(Url, formData, d => {
+        var data = d.data
+        data = JSON.parse(data)
+        console.log('------get ' + v_id + " data")
+        switch (v_id) {
+          case 'monthsta':
+            break
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
           case 'daysta':
             self.setDaySta(data['PEK'])
             break
@@ -113,7 +166,7 @@ export default {
             let airportSelected = 'PEK'
             let arrTrajs = []
             let depTrajs = []
-            trajData.forEach(function (d) {
+            trajData.forEach(function(d) {
               try {
                 var origin = d['origin']['code']['iata']
                 var destination = d['destination']['code']['iata']
@@ -128,20 +181,31 @@ export default {
                   if (d['arr'] == 1) {
                     arrTrajs.push(d)
                   }
-                  if (d['arr'] ==0 ) {
+                  if (d['arr'] == 0) {
                     depTrajs.push(d)
                   }
                 }
               }
             })
+<<<<<<< HEAD
             trajData = {'arrTrajs': arrTrajs, 'depTrajs': depTrajs}
             //console.log(trajData)
             self.setTrajData(trajData)
             break
         }  
+=======
+            trajData = { 'arrTrajs': arrTrajs, 'depTrajs': depTrajs }
+            console.log(trajData)
+
+            // self.$store.dispatch('setTrajData',trajData)
+            self.setTrajData(trajData)
+            break
+        }
+        console.log(data)
+>>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
       })
     }
-         
+
   }
 }
 
@@ -169,7 +233,7 @@ export default {
       width: 100%;
       height: 80%;
     }
-  
+
     #timeline {
       position: absolute;
       left: 0;
