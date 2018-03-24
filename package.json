@@ -1,7 +1,7 @@
 {
-  "name": "vue-flight",
+  "name": "vue-lbvis",
   "version": "1.0.0",
-  "description": "boeing-flight",
+  "description": "lbvis",
   "author": "pkuvis",
   "private": true,
   "scripts": {
