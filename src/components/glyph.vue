@@ -320,7 +320,7 @@ export default {
   margin: 0;
   color: white;
   border-bottom: 1.5px solid grey; 
-  border-left: 1px solid grey; 
+  
 }
 
 #workloadDiv{

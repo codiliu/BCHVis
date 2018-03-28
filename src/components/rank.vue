@@ -198,7 +198,7 @@ export default {
   #rank-bar {
     position: absolute;
     top: 10%;
-    left: 00%;
+    left: 0%;
     width: 100%;
     height: 90%;
     padding:5px 5px 5px 5px;
