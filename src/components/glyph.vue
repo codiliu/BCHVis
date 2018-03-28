@@ -38,6 +38,7 @@ export default {
       // for(var i=0;i<=maxRound;i++){
       //   selectRound[i]=0
       // }
+      var self = this
       var workloadData = this.extractProcess(data['nodes'], 'workload')
       var blockData = this.extractProcess(data['nodes'], 'count')
 
@@ -167,7 +168,8 @@ export default {
         d3.selectAll('.workloadClass').style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
 
-        var selectRound =[]
+        //var selectRound = []
+        var selectRound = {}
         d3.selectAll('.workloadClass')
           .on('mouseover', function(d){
             d3.select(this).style('cursor', 'pointer')
@@ -186,8 +188,8 @@ export default {
               d3.select('#count'+(round-1))
                 .style('background', '#e8e5e5')
 
-              selectRound.push(round)
-              // selectRound[round] = 1
+              //selectRound.push(round)
+              selectRound[round] = 1
             }
             else{
               d3.select(this)
@@ -196,8 +198,8 @@ export default {
               d3.select('#count'+(round-1))
                 .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
-              selectRound.splice(selectRound.indexOf(round),1)
-              // selectRound[round] = 0
+              //selectRound.splice(selectRound.indexOf(round),1)
+              selectRound[round] = 0
             }
            
             self.setSelectRound(selectRound)
@@ -220,7 +222,8 @@ export default {
                 d3.select('#workload'+(round-1))
                   .style('background', '#e8e5e5')
 
-                selectRound.push(round)
+                // selectRound.push(round)
+                selectRound[round] = 1
               }
               else{
                 d3.select(this)
@@ -229,7 +232,8 @@ export default {
                 d3.select('#workload'+(round-1))
                   .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
-                selectRound.splice(selectRound.indexOf(round),1)
+                //selectRound.splice(selectRound.indexOf(round),1)
+                selectRound[round] = 0
               }
               //console.log(selectRound)
               self.setSelectRound(selectRound)
