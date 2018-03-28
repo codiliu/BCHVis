@@ -429,6 +429,30 @@ export default {
       {
         var self = this;
 
+        if (rounds.length == 0) {
+          for (var i = 0; i < self.n_nodes; i ++) self.rankings[i] = i;
+        } else {
+          var procwls = []
+          for (var i = 0; i < self.n_nodes; i ++) procwls.push(0);
+          self.nodes.forEach(function (d, i) {
+            for (var j = 0; j < rounds.length; j ++)
+              if (rounds[j] == d.round) 
+                procwls[d.name] += d.workload;
+          })
+
+          var proc2wls = []
+          for (var i = 0; i < self.n_nodes; i ++)
+            proc2wls.push({"name": i, "workload": procwls[i]});
+          proc2wls.sort(function (a, b) {
+            return b["workload"] - a["workload"];
+          });
+
+          self.rankings = {};
+          proc2wls.forEach(function (d, i) {
+            self.rankings[d.name] = i;
+          })
+        }
+/*
         var procwls = []
         for (var i = 0; i < self.n_nodes; i ++) procwls.push(0);
         self.nodes.forEach(function (d, i) {
@@ -447,8 +471,8 @@ export default {
         proc2wls.forEach(function (d, i) {
           self.rankings[d.name] = i;
         })
-
-        console.log("rankins:", self.rankings);
+*/
+        console.log("rankings:", self.rankings);
       },
 
       computeReorderOrder(blockid)
