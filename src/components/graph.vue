@@ -22,7 +22,8 @@ export default {
   },
   computed: {
       ...mapGetters({
-        graphData: 'getGraphData'
+        graphData: 'getGraphData',
+        selectRound: 'getSelectRound'
       }),
   },
   watch: {
@@ -30,6 +31,9 @@ export default {
       console.log('graphData: ', data)
       this.drawGraph(data['nodes'], data['links'], data['min_value'], data['max_value'], data['min_link_count'], data['max_link_count'], data['min_nufdpts'], data['max_npts'], data['max_wl_estWl_diff'], data['min_wl_estWl_diff'], data['min_wl'], data['max_wl'], data['min_nfdpts'], data['max_nfdpts'], data['transfer_json'], data['dist_json'])
       //console.log('d3: ',d3)
+    },
+    selectRound: function(data){
+      console.log('data: ', data)
     }
   },
   methods: {
