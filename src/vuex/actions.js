@@ -5,6 +5,7 @@ export default {
     commit(types.GRAPH_DATA, graphData)
   },
   setSelectRound({ commit, state }, selectRound) {
+    console.log(selectRound)
     commit(types.SELECT_ROUND, selectRound)
   },
 

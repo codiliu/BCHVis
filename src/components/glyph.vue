@@ -34,10 +34,10 @@ export default {
   watch: {
     graphData: function(data) {
       var maxRound = d3.max(data['nodes'], function(d){ return d.round})
-      var selectRound = []
-      for(var i=1;i<=maxRound;i++){
-        selectRound[i]=0
-      }
+      // var selectRound = []
+      // for(var i=0;i<=maxRound;i++){
+      //   selectRound[i]=0
+      // }
       var workloadData = this.extractProcess(data['nodes'], 'workload')
       var blockData = this.extractProcess(data['nodes'], 'count')
 
@@ -56,8 +56,8 @@ export default {
         }
       }
 
-      this.drawGlyph(workloadData, '#workloadDiv', 'workload', selectRound)
-      this.drawGlyph(blockData, '#blockDiv', 'count', selectRound)
+      this.drawGlyph(workloadData, '#workloadDiv', 'workload')
+      this.drawGlyph(blockData, '#blockDiv', 'count')
     }
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
      //   .log('filterData:', filterData)
       return filterData
     },
-    drawGlyph(data, divClass, keyValue, selectRound){
+    drawGlyph(data, divClass, keyValue){
       var self = this
       var maxKey = 0
       for(var index in data){
@@ -125,7 +125,7 @@ export default {
           .attr('class', 'd3-tip')
           .offset([0, 0])
           .html(function(d) {
-            return "progressId: "+d.data.name+"<br>"+ keyValue + ": " + d.data[keyValue] + "";
+            return "processId: "+d.data.name+"<br>"+ keyValue + ": " + d.data[keyValue] + "";
             //return "workload" + ": <span style='color:orangered'>" + d.data.workload + "</span>";
           });
 
@@ -166,11 +166,15 @@ export default {
 
         d3.selectAll('.workloadClass').style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
+
+        var selectRound =[]
         d3.selectAll('.workloadClass')
           .on('mouseover', function(d){
             d3.select(this).style('cursor', 'pointer')
           })
           .on('click', function(){
+            
+
             var roundID = d3.select(this).attr("id")
             var round = parseInt(roundID.split('d')[1])+1
             console.log('round: ', round)
@@ -182,7 +186,8 @@ export default {
               d3.select('#count'+(round-1))
                 .style('background', '#d8d8d8')
 
-              selectRound[round] = 1
+              selectRound.push(round)
+              // selectRound[round] = 1
             }
             else{
               d3.select(this)
@@ -191,9 +196,10 @@ export default {
               d3.select('#count'+(round-1))
                 .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
-              selectRound[round] = 0
+              selectRound.splice(selectRound.indexOf(round),1)
+              // selectRound[round] = 0
             }
-            //console.log(selectRound)
+           
             self.setSelectRound(selectRound)
           })
 
@@ -214,7 +220,7 @@ export default {
                 d3.select('#workload'+(round-1))
                   .style('background', '#d8d8d8')
 
-                selectRound[round] = 1
+                selectRound.push(round)
               }
               else{
                 d3.select(this)
@@ -223,7 +229,7 @@ export default {
                 d3.select('#workload'+(round-1))
                   .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
-                selectRound[round] = 0
+                selectRound.splice(selectRound.indexOf(round),1)
               }
               //console.log(selectRound)
               self.setSelectRound(selectRound)
