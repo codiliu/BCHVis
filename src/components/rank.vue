@@ -76,7 +76,7 @@ export default {
       var containerWidth = +$('#rank-bar').width()
       var containerHeight = +$('#rank-bar').height()
 
-      var margin = {top: 10, right: 20, bottom: 20, left: 20},
+      var margin = {top: 10, right: 20, bottom: 15, left: 20},
           width = containerWidth - margin.left - margin.right,
           height = containerHeight - margin.top - margin.bottom;
       var barHeight = height/(data.length*1.1)
@@ -122,7 +122,8 @@ export default {
        var bars = rankSvg.selectAll("bar")
            .data(data)
          .enter().append("rect")
-           .style("fill", "grey")
+           .style("fill", "#666")
+           .attr('opacity', 0.5)
            .attr("y", function(d,i) { return y(d.processId)-barHeight/2; })
            .attr("width", function(d){return x(d.workload)})
            .attr("x", 0)

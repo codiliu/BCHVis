@@ -29,21 +29,22 @@ export default {
   watch: {
     graphData: function(data) {
       console.log('graphData: ', data)
-      this.drawGraph(data['nodes'], data['links'], data['min_value'], data['max_value'], data['min_link_count'], data['max_link_count'], data['min_nufdpts'], data['max_npts'], data['max_wl_estWl_diff'], data['min_wl_estWl_diff'], data['min_wl'], data['max_wl'], data['min_nfdpts'], data['max_nfdpts'], data['transfer_json'], data['dist_json'])
+      this.drawGraph(data['nodes'], data['links'], data['transfer_json'], data['dist_json'])
       //console.log('d3: ',d3)
     },
     selectRound: function(data){
       console.log('data: ', data)
+      // this.rerankGraph(data)
     }
   },
   methods: {
-    drawGraph(nodes, links, min_value, max_value, min_link_count, max_link_count, min_nufdpts, max_npts, max_wl_estWl_diff, min_wl_estWl_diff, min_wl, max_wl, min_nfdpts, max_nfdpts, transfer_json, dist_json) {
+    drawGraph(nodes, links, transfer_json, dist_json) {
       var self = this
 
       var containerWidth = +$('#load-balance-container').width()
       var containerHeight = +$('#load-balance-container').height()
 
-      var margin = {top: 20, right: 15, bottom: 10, left: 10}
+      var margin = {top: 20, right: 15, bottom: 20, left: 10}
       var globalDistributionObj = {}
       var svg = d3.select("#load-balance-container")
         .append('svg')
@@ -69,7 +70,7 @@ export default {
 
       var topWrapperHeight = height; // height*1.5
 
-      var lineWidth = width * 0.02,
+      var lineWidth = 0, // no line view
         lineHeight = topWrapperHeight
 
       var lineG = tg.append("g")
@@ -146,13 +147,50 @@ export default {
 
 
 
+      var max_wl = [], min_wl = [];
+      var max_est_wl = [], min_est_wl = [];
+      var max_wl_estWl_diff = [], min_wl_estWl_diff = [];
 
-      var menu = contextMenu().items('Incoming Block Dist.', 'Outgoing Block Dist.', 'Sources/Targets', 'Focused Sources/Targets');
+      var min_all_npts, max_all_npts;
+      var min_npts, max_npts;
+      var min_nfdpts, max_nfdpts;
+      var min_nufdpts, max_nufdpts;
+      var min_value, max_value;
+      var min_link_count, max_link_count;
+      for (var i = 0; i < max_round; i++) {
+        min_wl[i] = 1000000000;
+        max_wl[i] = 0;
 
-      var proc_link = graphG.append('g');
-      var outdist_link = graphG.append('g');
-      var indist_link = graphG.append('g');
-      var transpath_link = graphG.append('g');
+        min_est_wl[i] = 1000000000;
+        max_est_wl[i] = 0;
+
+        min_wl_estWl_diff[i] = 1000000000;
+        max_wl_estWl_diff[i] = 0;
+
+        nodes.forEach(function (d, j) {
+          if (d.round == i + 1) {
+            min_wl[i] = Math.min(min_wl[i], parseInt(d.workload))
+            max_wl[i] = Math.max(max_wl[i], parseInt(d.workload))
+
+            min_est_wl[i] = Math.min(min_est_wl[i], parseInt(d.estWorkload))
+            max_est_wl[i] = Math.max(max_est_wl[i], parseInt(d.estWorkload))
+
+            min_wl_estWl_diff[i] = Math.min(min_wl_estWl_diff[i], Math.abs(parseInt(d.workload) - parseInt(d.estWorkload)))
+            max_wl_estWl_diff[i] = Math.max(max_wl_estWl_diff[i], Math.abs(parseInt(d.workload) - parseInt(d.estWorkload)))
+          }
+        });
+      }
+      min_npts = d3.min(nodes, function (d) { return d.npts });
+      max_npts = d3.max(nodes, function (d) { return d.npts });
+      min_nfdpts = d3.min(nodes, function (d) { return d.nfdpts });
+      max_nfdpts = d3.max(nodes, function (d) { return d.nfdpts });
+      min_nufdpts = d3.min(nodes, function (d) { return d.npts - d.nfdpts });
+      max_nufdpts = d3.max(nodes, function (d) { return d.npts - d.nfdpts });
+      min_value = d3.min(links, function (d) { return d.value });
+      max_value = d3.max(links, function (d) { return d.value });
+      min_link_count = d3.min(links, function (d) { return d.count });
+      max_link_count = d3.max(links, function (d) { return d.count });
+    
 
 
       var node_json = {}
@@ -179,6 +217,14 @@ export default {
         max_nodes.push({"round": node_json[i+1][0].round, "name": node_json[i+1][0].name});
       }
       //if (d.rank == n_nodes-1) max_nodes.push({"round": d.round, "name": d.name});
+
+
+      var menu = contextMenu().items('Incoming Block Dist.', 'Outgoing Block Dist.', 'Sources/Targets', 'Focused Sources/Targets');
+
+      var proc_link = graphG.append('g');
+      var outdist_link = graphG.append('g');
+      var indist_link = graphG.append('g');
+      var transpath_link = graphG.append('g');
 
       var line_data = []
       links.forEach(function (d) {
@@ -299,7 +345,7 @@ export default {
           var focused_node = {"name": d.name, "round": d.round}; 
           d3.event.preventDefault();
           console.log('contextmenu')
-          menu(d3.mouse(this)[0]+(lineWidth + 20 + margin.left), d3.mouse(this)[1] + margin.top, focused_node);
+          menu(d3.mouse(this)[0]+(lineWidth + 20), d3.mouse(this)[1], focused_node);
         });
 
       // draw nodes with max workload TODO

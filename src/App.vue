@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar navbar-default" role="navigation">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">Interactive Visualizing the Dynamic Load Balancing in Parallel Particle Tracing</a>
+        <a class="navbar-brand" href="#">LBVis: Interactively Visualizing the Dynamic Load Balancing in Parallel Particle Tracing</a>
       </div>
     </nav>
     <div id="content">
@@ -42,21 +42,9 @@ export default {
     var nodes = [], links = []
     var transfer_json = {}, dist_json = {};
 
-    var max_wl = [], min_wl = [];
-    var max_est_wl = [], min_est_wl = [];
-    var max_wl_estWl_diff = [], min_wl_estWl_diff = [];
-
-    var min_all_npts, max_all_npts;
-    var min_npts, max_npts;
-    var min_nfdpts, max_nfdpts;
-    var min_nufdpts, max_nufdpts;
-    var min_value, max_value;
-    var min_link_count, max_link_count;
-
-    var no = "";
     var dir = "static/resource/data"+n_nodes+"_2/"
 
-    d3.csv(dir + "block_dist" + no + ".csv", function (error, data_d1) {
+    d3.csv(dir + "block_dist.csv", function (error, data_d1) {
       if (error) throw error;
 
       data_d1.forEach(function (d, i) {
@@ -82,7 +70,7 @@ export default {
       });
 
       
-      d3.csv(dir + "block_transfer" + no + ".csv", function (error, data_t1) {
+      d3.csv(dir + "block_transfer.csv", function (error, data_t1) {
         if (error) throw error;
 
         data_t1.forEach(function (d, i) {
@@ -107,7 +95,7 @@ export default {
           }
         });
 
-          d3.csv(dir + "nodes" + no + ".csv", function (error, data2) {
+          d3.csv(dir + "nodes.csv", function (error, data2) {
             if (error) throw error;
 
             data2.forEach(function (d, i) {
@@ -126,38 +114,9 @@ export default {
               }
             });
 
-            for (var i = 0; i < max_round; i++) {
-              min_wl[i] = 1000000000;
-              max_wl[i] = 0;
-
-              min_est_wl[i] = 1000000000;
-              max_est_wl[i] = 0;
-
-              min_wl_estWl_diff[i] = 1000000000;
-              max_wl_estWl_diff[i] = 0;
-
-              nodes.forEach(function (d, j) {
-                if (d.round == i + 1) {
-                  min_wl[i] = Math.min(min_wl[i], parseInt(d.workload))
-                  max_wl[i] = Math.max(max_wl[i], parseInt(d.workload))
-
-                  min_est_wl[i] = Math.min(min_est_wl[i], parseInt(d.estWorkload))
-                  max_est_wl[i] = Math.max(max_est_wl[i], parseInt(d.estWorkload))
-
-                  min_wl_estWl_diff[i] = Math.min(min_wl_estWl_diff[i], Math.abs(parseInt(d.workload) - parseInt(d.estWorkload)))
-                  max_wl_estWl_diff[i] = Math.max(max_wl_estWl_diff[i], Math.abs(parseInt(d.workload) - parseInt(d.estWorkload)))
-                }
-              });
-            }
-            min_npts = d3.min(nodes, function (d) { return d.npts });
-            max_npts = d3.max(nodes, function (d) { return d.npts });
-            min_nfdpts = d3.min(nodes, function (d) { return d.nfdpts });
-            max_nfdpts = d3.max(nodes, function (d) { return d.nfdpts });
-            min_nufdpts = d3.min(nodes, function (d) { return d.npts - d.nfdpts });
-            max_nufdpts = d3.max(nodes, function (d) { return d.npts - d.nfdpts });
             //compute = d3.interpolate(a, b);
 
-            d3.csv(dir + "links" + no + ".csv", function (error, data3) {
+            d3.csv(dir + "links.csv", function (error, data3) {
               if (error) throw error;
 
               data3.forEach(function (d) {
@@ -172,34 +131,8 @@ export default {
                 }
               });
 
-              min_value = d3.min(links, function (d) {
-                return d.value;
-              });
-              max_value = d3.max(links, function (d) {
-                return d.value;
-              });
-
-              min_link_count = d3.min(links, function (d) {
-                return d.count;
-              });
-              max_link_count = d3.max(links, function (d) {
-                return d.count;
-              });
-
               self.setGraphData({'nodes': nodes, 
                                  'links': links, 
-                                 'min_value': min_value,
-                                 'max_value': max_value,
-                                 'min_link_count': min_link_count,
-                                 'max_link_count': max_link_count,
-                                 'min_nufdpts': min_nufdpts,
-                                 'max_npts': max_npts,
-                                 'max_wl_estWl_diff': max_wl_estWl_diff,
-                                 'min_wl_estWl_diff': min_wl_estWl_diff,
-                                 'min_wl': min_wl,
-                                 'max_wl': max_wl,
-                                 'min_nfdpts': min_nfdpts,
-                                 'max_nfdpts': max_nfdpts,
                                  'transfer_json': transfer_json,
                                  'dist_json': dist_json
                                })

@@ -181,10 +181,10 @@ export default {
 
             if(d3.select(this).style("background")=="rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box"){
               d3.select(this)
-                .style('background', '#d8d8d8')
+                .style('background', '#e8e5e5')
 
               d3.select('#count'+(round-1))
-                .style('background', '#d8d8d8')
+                .style('background', '#e8e5e5')
 
               selectRound.push(round)
               // selectRound[round] = 1
@@ -215,10 +215,10 @@ export default {
 
               if(d3.select(this).style("background")=="rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box"){
                 d3.select(this)
-                  .style('background', '#d8d8d8')
+                  .style('background', '#e8e5e5')
 
                 d3.select('#workload'+(round-1))
-                  .style('background', '#d8d8d8')
+                  .style('background', '#e8e5e5')
 
                 selectRound.push(round)
               }
