@@ -166,6 +166,7 @@ export default {
              .on('mouseout', function(d){ tip.hide(d, this) });
 
         d3.selectAll('.workloadClass').style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
+        d3.selectAll('.blockClass').style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
 
         var selectRound =[]
@@ -196,8 +197,7 @@ export default {
               
               d3.select('#count'+(round-1))
                 .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
-
-              selectRound.splice(selectRound.indexOf(round),1)
+              if(selectRound.indexOf(round)!=-1) selectRound.splice(selectRound.indexOf(round),1)
               // selectRound[round] = 0
             }
            
@@ -230,7 +230,7 @@ export default {
                 d3.select('#workload'+(round-1))
                   .style('background', "rgb(255, 255, 255) none repeat scroll 0% 0% / auto padding-box border-box")
 
-                selectRound.splice(selectRound.indexOf(round),1)
+                if(selectRound.indexOf(round)!=-1) selectRound.splice(selectRound.indexOf(round),1)
               }
               //console.log(selectRound)
               self.setSelectRound(selectRound)
