@@ -1539,8 +1539,8 @@ export default {
                 self.updateProcLinks(-1, -1);
                 self.updateProcNodes();
               } else {
-                graphG.selectAll(".noderects").remove();
-                graphG.selectAll(".nodetexts").remove();
+                self.graphG.selectAll(".noderects").remove();
+                self.graphG.selectAll(".nodetexts").remove();
 
                 for (var i = 0; i < self.max_round; i ++) {
                   self.selected_nodes[i] = {};
