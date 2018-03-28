@@ -33,7 +33,7 @@ export default {
   },
   mounted() {
     // this.getData();
-    console.log("map loading.....")
+    //console.log("map loading.....")
     
   },
   computed: {
@@ -43,7 +43,7 @@ export default {
   },
   watch: {
     graphData: function(data) {
-      console.log('graphData: ', data['nodes'][0])
+      //console.log('graphData: ', data['nodes'][0])
       var processData = this.extractProcess(data['nodes'])
       this.drawBarchart(processData)
     }
@@ -58,13 +58,13 @@ export default {
       })
       
       var changeData=[]
-      console.log('processData:', processData)
+      //console.log('processData:', processData)
       for(var index in processData){
         var record= processData[index];
         record['processId'] = index
         changeData.push(record)
       }
-      console.log('processData:', changeData)
+      //console.log('processData:', changeData)
       return changeData
       
     },
@@ -107,7 +107,7 @@ export default {
       x.domain([0, d3.max(data, function(d) { return d.workload; })]);
       y.domain(data.map(function(d){ return d.processId}))
 
-      console.log('x:', x.domain())
+      //console.log('x:', x.domain())
 
       rankSvg.append("g")
            .attr("class", "y axis")
@@ -122,7 +122,7 @@ export default {
        var bars = rankSvg.selectAll("bar")
            .data(data)
          .enter().append("rect")
-           .style("fill", "steelblue")
+           .style("fill", "grey")
            .attr("y", function(d,i) { return y(d.processId)-barHeight/2; })
            .attr("width", function(d){return x(d.workload)})
            .attr("x", 0)

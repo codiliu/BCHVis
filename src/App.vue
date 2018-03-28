@@ -7,6 +7,7 @@
     </nav>
     <div id="content">
       <myRank id="rank-container"></myRank>
+      <myGlyph id="glyph-container"></myGlyph>
       <myGraph id="load-balance-container"></myGraph>
     </div>
   </div>
@@ -17,14 +18,15 @@ import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
 import BootstrapVue from 'bootstrap-vue'
 import myGraph from './components/graph.vue'
 import myRank from './components/rank.vue'
+import myGlyph from './components/glyph.vue'
 import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'app',
-  components: { myGraph, myRank },
+  components: { myGraph, myRank, myGlyph },
   methods: {
-    ...mapActions(['setGraphData']),
+    ...mapActions(['setGraphData', 'setSelectRound']),
   },
   async created() {
     // axios.get("../static/resource/data32_2/block_transfer.csv").then(response => {  
@@ -259,7 +261,7 @@ export default {
           var mx_line = d3.max(lines, function (d) { return d.x });
           var my_line = d3.max(lines, function (d) { return d.y });
 
-          console.log(mx_line, my_line);
+          //console.log(mx_line, my_line);
           x_line.domain([0, nodes_num.length])  // Math.ceil(mx_line)
           y_line.domain([1, my_line]) // Math.ceil(my_line)
 
@@ -392,15 +394,12 @@ export default {
                 return d.count;
               });
 
-              console.log(min_value, max_value, min_link_count, max_link_count);
               var histogramHeight = height * 0.15 * 0.8
               var histogramWidth = width / 4 * 1.0
               var margin = {top: histogramHeight * 0.2, right: histogramWidth * 0.05, bottom: histogramHeight * 0.05, left: 0}
              
-
               console.log("nodes: ", nodes)
               console.log("links: ", links)
-              console.log("nodes_num: ", nodes_num)
 
               self.setGraphData({'nodes': nodes, 
                                  'links': links, 
@@ -442,15 +441,7 @@ export default {
                                  'temp_nodes': temp_nodes,
                                  'dist_json': dist_json,
                                  'transfers':transfers})
-              //self.$store.dispatch('setGraphData',{'nodes': nodes, 'links': links})
-              //drawGraph(nodes, links)
-              //drawLineChart(lines)
-
-              // d3.select('#slider1').call(d3.slider().min(min_link_count).max(max_link_count).on("slide", function(evt, value) {
-              //   d3.select('#slider1text').text(value);
-              //   filterPath(value)
-              // }));
-
+              
             });
           });
         });
@@ -687,7 +678,15 @@ export default {
       position: absolute;
       top: 0;
       left: 0;
-      width: 20%;
+      width: 12%;
+      height: 100%;
+      border: 1px solid grey;
+    }
+    #glyph-container {
+      position: absolute;
+      top: 0;
+      left: 12%;
+      width: 8%;
       height: 100%;
       border: 1px solid grey;
     }
