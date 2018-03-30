@@ -1,219 +1,188 @@
 <template>
   <div id="app">
-    <!-- <b-navbar toggleable="md" type="dark" variant="dark" ref="myNavbar"> -->
-    <!-- <b-navbar-toggle target="nav_collapse"></b-navbar-toggle> -->
-    <!-- <b-navbar-brand href="#">Air Traffic Control Visual Analysis System</b-navbar-brand> -->
-    <!-- Right aligned nav items -->
-    <!-- <b-navbar-nav class="ml-auto"> -->
-    <!-- <b-nav-item href="http://vis.pku.edu.cn" target="_blank">PKU VIS</b-nav-item> -->
-    <!-- </b-navbar-nav> -->
-    <!-- </b-navbar> -->
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">LBVis: Interactively Visualizing the Dynamic Load Balancing in Parallel Particle Tracing</a>
+      </div>
+    </nav>
     <div id="content">
-      <myMap id="map"></myMap>
-      <myTimeline id="timeline"></myTimeline>
-      <!-- <router-view/> -->
+      <myRank id="rank-container"></myRank>
+      <myGlyph id="glyph-container"></myGlyph>
+      <myGraph id="load-balance-container"></myGraph>
     </div>
   </div>
 </template>
 <script>
-// import $ from 'jquery'
-import myTimeline from './components/timeline.vue'
-import myMap from './components/map.vue'
+import '../node_modules/bootstrap/dist/css/bootstrap.css'
+import '../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
+import BootstrapVue from 'bootstrap-vue'
+import myGraph from './components/graph.vue'
+import myRank from './components/rank.vue'
+import myGlyph from './components/glyph.vue'
+import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
+import axios from 'axios'
 export default {
   name: 'app',
-  components: { myTimeline, myMap },
-<<<<<<< HEAD
+  components: { myGraph, myRank, myGlyph },
   methods: {
-    ...mapActions(['setMinuteSta', 'setDaySta','setTrajData']),
-  },
-  //
-  //computed:mapGetters(['getDaySta']),
-  created () {
-     // console.log('this.getDaySta(): ', this.getDaySta())
-    //console.log(mapActions)
-
-    console.log("data loading.....")
-    var self = this 
-   // self.setDaySta(11221)
-=======
-  // computed: {
-  //   ...mapActions(['setDaySta', 'setTrajData']),
-  // },
-  // methods:mapActions(['setDaySta','setTrajData']),
-  //computed:mapGetters(['getDaySta']),
-  methods: {
-    sleep(time) {
-      var now = new Date();
-      var exitTime = now.getTime() + time;
-      while (true) {
-        now = new Date();
-        if (now.getTime() > exitTime)
-          return;
-      }
-    },
-    ...mapActions(['setDaySta', 'setTrajData']),
+    ...mapActions(['setGraphData', 'setSelectRound']),
   },
   async created() {
-
-    // console.log('this.getDaySta(): ', this.getDaySta())
-
+    // axios.get("../static/resource/data32_2/block_transfer.csv").then(response => {  
+          
+    //       console.log(response) 
+    // });
 
     console.log("data loading.....")
     var self = this
-    // self.setDaySta(11221)
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
+    // connectDB()
 
-    //self.setDaySta(111)
-    //self.getDaySta()
-    this.$Loading.start();
-    await connectDB()
-    await getMonthSta(147525120000, 14832000000000)
-    await getDaySta('*')
-    await getCurtime(1481990400000, 1)
-    // this.sleep(1000)
+    sendTest()
 
-    this.$Loading.finish();
-
-    function getCurtime(curtime, duration) {
+    function sendTest () {
       var constraint = {}
       var formData = new URLSearchParams();
-      constraint['databasetype'] = 'mongodb'
-      constraint['datasetname'] = 'trajectory'
-      constraint['curtime'] = 1481990400000
-      constraint['duration'] = 1
-      constraint = JSON.stringify(constraint)
+      constraint = JSON.stringify(constraint)      
       formData.append('constraint', constraint)
-      sendUrl('query/curtime', formData, 'curtimedata')
+      sendUrl ('ws', formData, 'test')
     }
 
-    function getMonthSta(airport) {
-      var constraint = {}
-      var formData = new URLSearchParams();
-      constraint['databasetype'] = 'mongodb'
-      constraint['datasetname'] = 'dayStaMulti'
-      constraint['airport'] = airport
-      constraint = JSON.stringify(constraint)
-      formData.append('constraint', constraint)
-<<<<<<< HEAD
-      sendUrl ('query/monthsta', formData, 'daysta')
-=======
-      sendUrl('query/monthsta', formData, 'monthsta')
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
-    }
-
-    function getDaySta(dateTime) {
-      var constraint = {}
-      var formData = new URLSearchParams();
-      constraint['databasetype'] = 'mongodb'
-      constraint['datasetname'] = 'minuteStaMulti'
-      constraint['dateTime'] = dateTime
-      constraint = JSON.stringify(constraint)
-      formData.append('constraint', constraint)
-<<<<<<< HEAD
-      sendUrl ('query/daysta', formData, 'minutesta')
-=======
-      sendUrl('query/daysta', formData, 'daysta')
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
-
-      // self.$api.post('http://127.0.0.1:22028/'+'db/daysta',formData, r => {
-      //   console.log("daydata: ",r)
-      // })
-    }
-
-    function connectDB() {
-      var formData = new URLSearchParams();
-      formData.append('databasetype', 'mongodb')
-      formData.append('dbName', 'flight')
-      formData.append('port', 27066)
-      formData.append('host', '192.168.10.9')
-      // sendUrl ('db/connect', formData, 'connect')
-      self.$api.post('db/connect', formData, r => {
-        console.log("connect database success")
-      })
-    }
-
-    function sendUrl(Url, formData, v_id) {
-      // Url='http://127.0.0.1:22028/'+Url
-      console.log(Url)
-<<<<<<< HEAD
+    // function getCurtime (curtime, duration) {
+    //   var constraint = {}
+    //   var formData = new URLSearchParams();
+    //   constraint['databasetype'] = 'mongodb'
+    //   constraint['datasetname'] = 'trajectory'
+    //   constraint['curtime'] = 1481990400000
+    //   constraint['duration'] = 1
+    //   constraint = JSON.stringify(constraint)      
+    //   formData.append('constraint', constraint)
+    //   sendUrl ('query/curtime', formData, 'curtimedata')
+    // }
+   
+    function sendUrl (Url, formData, v_id){
+      Url='http://127.0.0.1:22068/'+Url
+      console.log('Request: ', Url)
       self.$api.post(Url,formData, d => {
-        var data=d.data
-        data = JSON.parse(data) 
-        console.log('------get '+v_id+" data")
-        switch(v_id){
-=======
-      self.$api.post(Url, formData, d => {
-        var data = d.data
-        data = JSON.parse(data)
-        console.log('------get ' + v_id + " data")
-        switch (v_id) {
-          case 'monthsta':
-            break
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
-          case 'daysta':
-            self.setDaySta(data['PEK'])
-            break
-          case 'minutesta':
-              var temp =[] 
-              data['PEK'].forEach(function(d){
-                temp=temp.concat(d['data'])
-              })
-             self.setMinuteSta(temp)
-            break
-          case 'curtimedata':
-            let trajData = data['trajData']
-            let airportSelected = 'PEK'
-            let arrTrajs = []
-            let depTrajs = []
-            trajData.forEach(function(d) {
-              try {
-                var origin = d['origin']['code']['iata']
-                var destination = d['destination']['code']['iata']
-                if (origin == airportSelected) {
-                  depTrajs.push(d)
-                }
-                if (destination == airportSelected) {
-                  arrTrajs.push(d)
-                }
-              } catch (e) {
-                if (airportSelected == 'PEK') {
-                  if (d['arr'] == 1) {
-                    arrTrajs.push(d)
-                  }
-                  if (d['arr'] == 0) {
-                    depTrajs.push(d)
-                  }
-                }
-              }
-            })
-<<<<<<< HEAD
-            trajData = {'arrTrajs': arrTrajs, 'depTrajs': depTrajs}
-            //console.log(trajData)
-            self.setTrajData(trajData)
-            break
-        }  
-=======
-            trajData = { 'arrTrajs': arrTrajs, 'depTrajs': depTrajs }
-            console.log(trajData)
-
-            // self.$store.dispatch('setTrajData',trajData)
-            self.setTrajData(trajData)
-            break
-        }
-        console.log(data)
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
+        console.log('success: ', d)
+        
       })
     }
+    var self = this
+
+    var max_round = 15, n_nodes = 32, n_nodes_ratio = 0.5; // 0.15 for 64 nodes
+
+    //var min_workload, max_worload;
+    var nodes = [], links = []
+    var transfer_json = {}, dist_json = {};
+    var dir = "static/resource/data"+n_nodes+"_2/"
+    d3.csv(dir + "block_dist.csv", function (error, data_d1) {
+      if (error) throw error;
+      data_d1.forEach(function (d, i) {
+        if (+d.round <= max_round) {
+          d = {
+            "name": +d.name,
+            "blockid": +d.blockid,
+            "isLocal": +d.isLocal,
+            "workload": +d.wl,
+            "estWorkload": +d.estWl,
+            "round": +d.round
+          }
+
+          if(!dist_json[d.round]) dist_json[d.round] = {}
+          if(!dist_json[d.round][d.name]) dist_json[d.round][d.name] = []
+
+          dist_json[d.round][d.name].push({
+            "blockid": d.blockid,
+            "workload": d.workload,
+            "estWorkload": d.estWorkload
+          })
+        }
+      });
+
+      
+      d3.csv(dir + "block_transfer.csv", function (error, data_t1) {
+        if (error) throw error;
+
+        data_t1.forEach(function (d, i) {
+          if (+d.round < max_round) {
+            // store by json structure
+            d = {
+              "source": +d.source,
+              "target": +d.target,
+              "blockid": +d.blockid,
+              "isLocal": +d.isLocal,
+              "count": +d.count,
+              "round": +d.round
+            }
+          
+            if(!transfer_json[d.round]) transfer_json[d.round] = {}
+            if(!transfer_json[d.round][d.source]) transfer_json[d.round][d.source] = {}
+
+            if(!transfer_json[d.round][d.source][d.target]) transfer_json[d.round][d.source][d.target] = []
+
+            //transfer_json[d.round][d.source][d.target].push(d.blockid)
+            transfer_json[d.round][d.source][d.target].push({"blockid": d.blockid, "isLocal": d.isLocal})
+          }
+        });
+
+          d3.csv(dir + "nodes.csv", function (error, data2) {
+            if (error) throw error;
+
+            data2.forEach(function (d, i) {
+              if (+d.round <= max_round) {
+                //count++;
+                nodes.push({ 
+                  "name": d.name,
+                  "count": +d.count,
+                  "localCount": +d.localCount,
+                  "workload": +d.workload,
+                  "estWorkload": +d.estWorkload,
+                  "npts": +d.npts,
+                  "nfdpts": +d.nfdpts,
+                  "round": +d.round 
+                });
+              }
+            });
+
+            //compute = d3.interpolate(a, b);
+
+            d3.csv(dir + "links.csv", function (error, data3) {
+              if (error) throw error;
+
+              data3.forEach(function (d) {
+                if (+d.round < max_round) {
+                  links.push({
+                    "source": d.source,
+                    "target": d.target,
+                    "value": parseInt(d.value),
+                    "count": parseInt(d.count),
+                    "round": parseInt(d.round)
+                  });
+                }
+              });
+
+              self.setGraphData({'nodes': nodes, 
+                                 'links': links, 
+                                 'transfer_json': transfer_json,
+                                 'dist_json': dist_json
+                               })
+
+              console.log({'nodes': nodes, 
+                                 'links': links, 
+                                 'transfer_json': transfer_json,
+                                 'dist_json': dist_json
+                               })
+            });
+          });
+      });
+    });
 
   }
 }
 
 </script>
 <style lang="less">
-@import "./style/base/style.less";
-@import "./style/base/base.vars.less";
-@import "./style/base/iview.less";
 
 #app {
   position: absolute;
@@ -222,25 +191,45 @@ export default {
   ul, ol {
       padding-left: 5px;
   }
+  .navbar{
+    height: 2.5em;
+    background: black;
+    color: grey;
+    a, .uk-link{
+      color:grey;
+      font-weight: bolder;
+    }
+  }
   #content {
     position: absolute;
     width: 100%;
-    height: 100%; //height:calc(~"100% - 56px");
-    #map {
+    top: 2.5em; 
+    height: calc(~"100% - 2.5em"); 
+    border-left: 2px solid grey;
+    border-right: 2px solid grey;
+    border-bottom: 2px solid grey;
+    #rank-container {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 80%;
+      width: 12%;
+      height: 100%;
+      border: 1px solid grey;
     }
-
-    #timeline {
+    #glyph-container {
       position: absolute;
-      left: 0;
-      top: 80%;
-      width: 100%;
-      height: 20%;
-      background: @bg-color;
+      top: 0;
+      left: 12%;
+      width: 8%;
+      height: 100%;
+      border: 1px solid grey;
+    }
+    #load-balance-container {
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 80%;
+      height: 100%;
     }
   }
 }

@@ -1,9 +1,5 @@
 
 export default {
-	getCurtime: state=>state.curtime,
-	getDaySta: state=>state.daysta,
-	getMinuteSta: state=>state.minutesta,
-	getSlidingWindowSize: state=>state.slidingwindowsize,
-	getTimelineTopRange: state=>state.timelineTopRange,
-	getTrajData: state=>state.trajData
+	getGraphData: state=>state.graphData,
+	getSelectRound: state=>state.selectRound
 }

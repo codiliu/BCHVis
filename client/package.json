@@ -1,7 +1,7 @@
 {
-  "name": "vue-flight",
+  "name": "vue-lbvis",
   "version": "1.0.0",
-  "description": "boeing-flight",
+  "description": "lbvis",
   "author": "pkuvis",
   "private": true,
   "scripts": {
@@ -14,11 +14,10 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
-<<<<<<< HEAD
     "babel-plugin-transform-object-assign": "^6.22.0",
-    "d3": "^4.7.4",
-=======
->>>>>>> df4b81bf092e5bfa03ebaec0dd949de220fbfcd8
+    "bootstrap-vue": "^2.0.0-rc.2",
+    "csv-loader": "^2.1.1",
+    "d3": "^3.5.17",
     "d3-3": "0.0.0",
     "d3-tip": "^0.7.1",
     "font-awesome": "^4.7.0",
@@ -28,6 +27,7 @@
     "leaflet-d3-svg-overlay": "^2.2.0",
     "leafletjs-canvas-overlay": "^1.0.1",
     "mapbox-gl": "^0.43.0",
+    "timeengine": "^6.6.99",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
