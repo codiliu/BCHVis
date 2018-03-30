@@ -36,7 +36,7 @@ export default {
 
     var self = this
 
-    var max_round = 15, n_nodes = 32 
+    var max_round = 15, n_nodes = 64 
 
     //var min_workload, max_worload;
     var nodes = [], max_nodes = [], links = [], dists = [], transfers = []
@@ -119,7 +119,7 @@ export default {
           d3.csv(dir + "nodes.csv", function (error, data2) {
             if (error) throw error;
 
-            var node_json = [];
+            var node_json = {};
             data2.forEach(function (d, i) {
               if (+d.round <= max_round) {
                 //count++;
@@ -137,7 +137,7 @@ export default {
                 if(!node_json[d.round]) node_json[+d.round] = []
                 node_json[+d.round].push({
                    // "index": d.index,
-                   "name": d.name,
+                   "name": +d.name,
                    "count": +d.count,
                    "localCount": +d.localCount,
                    "workload": +d.workload,
@@ -150,12 +150,14 @@ export default {
             })
 
             for (var i = 0; i < max_round; i ++) {
-              node_json[i+1].sort(function (a, b) {
+              node_json[parseInt(i)+1].sort(function (a, b) {
                 return b["workload"] - a["workload"];
               });
 
-              max_nodes.push({"round": node_json[i+1][0].round, "name": node_json[i+1][0].name});
+              max_nodes.push({"round": node_json[parseInt(i)+1][0].round, "name": node_json[parseInt(i)+1][0].name});
             }
+
+            console.log(max_nodes)
 
             d3.csv(dir + "links.csv", function (error, data3) {
               if (error) throw error;
