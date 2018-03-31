@@ -34,52 +34,51 @@ export default {
     //       console.log(response) 
     // });
 
-    console.log("data loading.....")
     var self = this
-    // connectDB()
 
     sendTest()
 
-    function sendTest () {
-      var constraint = {}
-      var formData = new URLSearchParams();
-      constraint = JSON.stringify(constraint)      
-      formData.append('constraint', constraint)
-      sendUrl ('ws', formData, 'test')
-    }
+        function sendTest () {
+          var constraint = {}
+          var formData = new URLSearchParams();
+          constraint = JSON.stringify(constraint)      
+          formData.append('constraint', constraint)
+          sendUrl ('ws', formData, 'test')
+        }
 
-    // function getCurtime (curtime, duration) {
-    //   var constraint = {}
-    //   var formData = new URLSearchParams();
-    //   constraint['databasetype'] = 'mongodb'
-    //   constraint['datasetname'] = 'trajectory'
-    //   constraint['curtime'] = 1481990400000
-    //   constraint['duration'] = 1
-    //   constraint = JSON.stringify(constraint)      
-    //   formData.append('constraint', constraint)
-    //   sendUrl ('query/curtime', formData, 'curtimedata')
-    // }
-   
-    function sendUrl (Url, formData, v_id){
-      Url='http://127.0.0.1:22068/'+Url
-      console.log('Request: ', Url)
-      self.$api.post(Url,formData, d => {
-        console.log('success: ', d)
+       
+       
+        function sendUrl (Url, formData, v_id){
+          Url='http://127.0.0.1:22068/'+Url
+          console.log('Request: ', Url)
+          self.$api.post(Url,formData, d => {
+            console.log('success: ', d)
+            
+          })
+        }
         
-      })
-    }
-    var self = this
-
-    var max_round = 15, n_nodes = 32, n_nodes_ratio = 0.5; // 0.15 for 64 nodes
+    var max_round = 15, n_nodes = 64 
 
     //var min_workload, max_worload;
-    var nodes = [], links = []
-    var transfer_json = {}, dist_json = {};
+    var nodes = [], max_nodes = [], links = [], dists = [], transfers = []
+    //var transfer_json = {}, dist_json = {};
+
     var dir = "static/resource/data"+n_nodes+"_2/"
+
     d3.csv(dir + "block_dist.csv", function (error, data_d1) {
       if (error) throw error;
+
       data_d1.forEach(function (d, i) {
         if (+d.round <= max_round) {
+          dists.push({
+            "name": +d.name,
+            "blockid": +d.blockid,
+            "isLocal": +d.isLocal,
+            "workload": +d.wl,
+            "estWorkload": +d.estWl,
+            "round": +d.round
+          })
+/*
           d = {
             "name": +d.name,
             "blockid": +d.blockid,
@@ -94,9 +93,11 @@ export default {
 
           dist_json[d.round][d.name].push({
             "blockid": d.blockid,
+            "isLocal": d.isLocal,
             "workload": d.workload,
             "estWorkload": d.estWorkload
           })
+*/
         }
       });
 
@@ -106,13 +107,22 @@ export default {
 
         data_t1.forEach(function (d, i) {
           if (+d.round < max_round) {
+            transfers.push({
+              "source": +d.source,
+              "target": +d.target,
+              "blockid": +d.blockid,
+              "isLocal": +d.isLocal,
+              //"count": +d.count,
+              "round": +d.round
+            })
+/*
             // store by json structure
             d = {
               "source": +d.source,
               "target": +d.target,
               "blockid": +d.blockid,
               "isLocal": +d.isLocal,
-              "count": +d.count,
+              //"count": +d.count,
               "round": +d.round
             }
           
@@ -123,17 +133,19 @@ export default {
 
             //transfer_json[d.round][d.source][d.target].push(d.blockid)
             transfer_json[d.round][d.source][d.target].push({"blockid": d.blockid, "isLocal": d.isLocal})
+*/
           }
         });
 
           d3.csv(dir + "nodes.csv", function (error, data2) {
             if (error) throw error;
 
+            var node_json = {};
             data2.forEach(function (d, i) {
               if (+d.round <= max_round) {
                 //count++;
                 nodes.push({ 
-                  "name": d.name,
+                  "name": +d.name,
                   "count": +d.count,
                   "localCount": +d.localCount,
                   "workload": +d.workload,
@@ -142,37 +154,72 @@ export default {
                   "nfdpts": +d.nfdpts,
                   "round": +d.round 
                 });
-              }
-            });
 
-            //compute = d3.interpolate(a, b);
+                if(!node_json[d.round]) node_json[+d.round] = []
+                node_json[+d.round].push({
+                   // "index": d.index,
+                   "name": +d.name,
+                   "count": +d.count,
+                   "localCount": +d.localCount,
+                   "workload": +d.workload,
+                   "estWorkload": +d.estWorkload,
+                   "npts": +d.npts,
+                   "nfdpts": +d.nfdpts,
+                   "round": +d.round 
+                })
+              }
+            })
+
+            for (var i = 0; i < max_round; i ++) {
+              node_json[parseInt(i)+1].sort(function (a, b) {
+                return b["workload"] - a["workload"];
+              });
+
+              max_nodes.push({"round": node_json[parseInt(i)+1][0].round, "name": node_json[parseInt(i)+1][0].name});
+            }
+
+            console.log(max_nodes)
 
             d3.csv(dir + "links.csv", function (error, data3) {
               if (error) throw error;
 
+              var link_json = {}
               data3.forEach(function (d) {
                 if (+d.round < max_round) {
                   links.push({
+                    "source": +d.source,
+                    "target": +d.target,
+                    "value": +d.value,
+                    "count": +d.count,
+                    "round": +d.round
+                  });
+/*
+                  d = {
                     "source": d.source,
                     "target": d.target,
-                    "value": parseInt(d.value),
-                    "count": parseInt(d.count),
-                    "round": parseInt(d.round)
-                  });
+                    "value": +d.value,
+                    "count": +d.count,
+                    //"count": +d.count,
+                    "round": +d.round
+                  }
+
+                  if (!link_json[d.round]) link_json[d.round] = {}
+                  if (!link_json[d.round][d.source]) link_json[d.round][d.source] = {}
+                  if (!link_json[d.round][d.source][d.target]) link_json[d.round][d.source][d.target] = {"value": 0, "count": 0}
+
+                  link_json[d.round][d.source][d.target].value += d.value
+                  link_json[d.round][d.source][d.target].count += d.count
+*/
                 }
               });
 
               self.setGraphData({'nodes': nodes, 
+                                 'max_nodes': max_nodes,
                                  'links': links, 
-                                 'transfer_json': transfer_json,
-                                 'dist_json': dist_json
+                                 'dists': dists,
+                                 'transfers': transfers
                                })
 
-              console.log({'nodes': nodes, 
-                                 'links': links, 
-                                 'transfer_json': transfer_json,
-                                 'dist_json': dist_json
-                               })
             });
           });
       });
