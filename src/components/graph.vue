@@ -35,6 +35,7 @@ export default {
     },
     selectRound: function(data) {
       console.log('selected rounds: ', data)
+      self.rounds = data
       this.reRankGraph(data, this.graphData['nodes'], this.graphData['links'], this.graphData['dists'], this.graphData['transfers'])
     }
   },
@@ -108,7 +109,7 @@ export default {
       self.max_value = 0
       self.min_link_count = 0
       self.max_link_count = 0
-
+ 
       //self.nodes = []
       self.max_nodes = []
       //self.links = []
@@ -216,6 +217,13 @@ export default {
 
         self.indistnodes_source[i] = {};
         self.indistselected_nodes[i] = {};
+
+        for (var j = 0; j < self.display_nodes_array.length; j ++) {
+          var dnode = display_nodes_array[j];
+
+          self.outdistnodes_target[i][dnode] = 0
+          self.indistnodes_source[i][dnode] = 0
+        }
       }
 /*
       var max_nodes = []; // TODO 这个应该在原始数据中算出来，并且只需算一次
@@ -484,30 +492,109 @@ export default {
         self.graphG.selectAll(".noderects").remove();
         self.graphG.selectAll(".nodetexts").remove();
 
-        // remapping
-/*
-self.selected_block = -1;
-      self.selected_nodes = []
-      self.highlighted_nodes = [];          
+        for (var i = 0; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.indistselected_nodes[i][j] == 1 || self.indistpath_nodes[i][j] == 1) {
+              d3.selectAll('.in_block_dist'+(i+1)+j).remove();
+              d3.selectAll('.in_block_dist_rect'+(i+1)+j).remove();
+            }
+
+            if (self.outdistselected_nodes[i][j] == 1) {
+              d3.selectAll('.out_block_dist'+(i+1)+j).remove();
+              d3.selectAll('.out_block_dist_rect'+(i+1)+j).remove();
+            }
+          }
+        }
+
+        for (var i = 0; i < self.max_round; i ++) {
+          self.outdistnodes_target[i] = {};
+          self.indistnodes_source[i] = {};
+
+          for (var j = 0; j < self.display_nodes_array.length; j ++) {
+            var dnode = self.display_nodes_array[j];
+            self.outdistnodes_target[i][dnode] = 0
+            self.indistnodes_source[i][dnode] = 0
+          }
+        }
+    
+        for (var i = 0; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.selected_nodes[i][j] == 1 && self.filtered_nodes[j] != 1) 
+              self.selected_nodes[i][j] = 0
+
+            if (self.outdistselected_nodes[i][j] == 1 && self.filtered_nodes[j] != 1) 
+              self.outdistselected_nodes[i][j] = 0
+
+            if (self.indistselected_nodes[i][j] == 1 && self.filtered_nodes[j] != 1) 
+              self.indistselected_nodes[i][j] = 0
+          }
+        }
+
+        /*
+        self.selected_block = -1; //
+      self.selected_nodes = [] //
+      self.highlighted_nodes = []; //         
       self.nodes_source = []
       self.nodes_target = [];
       self.nodes_transfer = [];
       self.indistpath_nodes = [];
 
-      self.outdistselected_nodes = []
-      self.indistselected_nodes = [];
-      self.outdistnodes_target = []
-      self.indistnodes_source = [];
+      self.outdistselected_nodes = [] //
+      self.indistselected_nodes = []; //
+      self.outdistnodes_target = [] //
+      self.indistnodes_source = []; //
 
-      self.focused_round = -1
-      self.focused_name = -1;
-*/
+      self.focused_round = -1 //
+      self.focused_name = -1; //
+        */
 
+        if (self.filtered_nodes[self.focused_name] != 1) {
+          self.focused_round = -1;
+          self.focused_name = -1;
+        }
+
+        for (var i = 1; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.indistselected_nodes[i][j] == 1) {
+              self.addInBlockDist(i+1, j, -1)
+            }
+          }
+        }
+
+        for (var i = 0; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.outdistselected_nodes[i][j] == 1) {
+              self.addOutBlockDist(i+1, j, 0)
+            }
+          }
+        }
+
+        if (self.selected_block != -1) {
+          self.computeBlockPathBlocks(self.selected_block);
+          for (var i = 1; i < self.max_round; i ++) {
+            for (var j = 0; j < self.display_nodes_array.length; j ++) {
+              var dnode = self.display_nodes_array[j];
+
+              if (self.indistpath_nodes[i][dnode] == 1) {
+                if (self.indistselected_nodes[i][dnode] == 1) 
+                  self.updateBlockTransferPathRelated(i+1, dnode, self.selected_block);
+                else {
+                  self.addInBlockDist(i+1, dnode, self.selected_block);
+                  if (self.outdistselected_nodes[i-1][dnode] == 1) { // for connecting outdist blocks and indist blocks (along the block transfer path)
+                    self.removeOutBlockDist(i, dnode);
+                    self.addOutBlockDist(i, dnode, 0)
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        self.updateProcLinks(self.focused_round, self.focused_name);
         self.updateProcNodes();
         self.updateProcNodeRects(); 
 
         if (self.isNoneNodesHighlighted()) self.recoveryProcNodesLinks();
-        else self.updateProcLinks(self.focused_round, self.focused_name);
       } 
     },
 
@@ -1009,10 +1096,17 @@ self.selected_block = -1;
 */
         for (var j = 0; j < self.display_nodes_array.length; j ++) {
           var dnode = self.display_nodes_array[j]
-          if (self.nodes_target[i][dnode] == 1 || self.nodes_source[i][dnode] == 1 || self.outdistselected_nodes[i][dnode] == 1 || self.outdistnodes_target[i][dnode] > 0 || self.indistselected_nodes[i][dnode] == 1 || self.indistnodes_source[i][dnode] > 0 || self.nodes_transfer[i][dnode] == 1 || 
-            self.indistpath_nodes[i][dnode] == 1) {
-            self.highlighted_nodes[i][dnode] = 1;
 
+          if (self.nodes_target[i][dnode] == 1 || 
+            self.nodes_source[i][dnode] == 1 || 
+            self.outdistselected_nodes[i][dnode] == 1 || 
+            self.outdistnodes_target[i][dnode] > 0 || 
+            self.indistselected_nodes[i][dnode] == 1 || 
+            self.indistnodes_source[i][dnode] > 0 || 
+            self.nodes_transfer[i][dnode] == 1 || 
+            self.indistpath_nodes[i][dnode] == 1) 
+          {
+            self.highlighted_nodes[i][dnode] = 1;
             hnodes.push({
               "name": dnode,
               "round": i+1
@@ -1766,12 +1860,12 @@ self.selected_block = -1;
 */
       for(var target in self.transfer_json[round][name]) {
         for (var bid in self.transfer_json[round][name][target]) {
-          if (self.filtered_nodes[parseInt(target)] == 1)
+          //if (self.filtered_nodes[parseInt(target)] == 1)
           self.outdistnodes_target[round][parseInt(target)] = Math.max(self.outdistnodes_target[round][parseInt(target)]-1, 0);
         }
       }
 
-      console.log("self.outdistnodes_target", self.outdistnodes_target)
+      // console.log("self.outdistnodes_target", self.outdistnodes_target)
 
       d3.selectAll('.out_block_dist'+round+name).remove();
       d3.selectAll('.out_block_dist_rect'+round+name).remove();
