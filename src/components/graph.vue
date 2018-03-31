@@ -225,183 +225,9 @@ export default {
           self.indistnodes_source[i][dnode] = 0
         }
       }
-/*
-      var max_nodes = []; // TODO 这个应该在原始数据中算出来，并且只需算一次
-      for (var i = 0; i < self.max_round; i ++) {
-        self.node_json[i+1].sort(function (a, b) {
-          return b["workload"] - a["workload"];
-        });
 
-        max_nodes.push({"round": self.node_json[i+1][0].round, "name": self.node_json[i+1][0].name});
-      }
-*/
       self.filterData([], nodes, links, dists, transfers);
-/*
-      links.forEach(function (d) {
-        if (d.value > 0 || d.count > 0) {
-          var x1 = self.rankings[d.source] * self.graphWidth / self.n_display_nodes,
-            y1 = (d.round - 1) * self.graphHeight / (self.max_round - 1),
-            x2 = self.rankings[d.target] * self.graphWidth / self.n_display_nodes,
-            y2 = d.round * self.graphHeight / (self.max_round - 1);
-
-          var p1 = [x1, y1]
-          var p2 = [(x2 + 3 * x1) / 4, (y1 + y2) / 2]
-          var p3 = [(3 * x2 + x1) / 4, (y1 + y2) / 2]
-          var p4 = [x2, y2]
-
-          line_data.push({
-            'points': [p1, p2, p3, p4],
-            'attr': {"source": d.source, "target": d.target, "value": d.value, "count": d.count, "round": d.round}
-          })
-        }
-      })
-*/
-
-/*
-      var line_data = []
-      for (var r in self.link_json) {
-        for (var source in self.link_json[r]) {
-          for (var target in self.link_json[r][source]) {
-            var d = self.link_json[r][source][target]
-
-            if (d.value > 0 || d.count > 0) {
-              var x1 = self.rankings[parseInt(source)] * self.graphWidth / self.n_display_nodes,
-                y1 = (parseInt(r) - 1) * self.graphHeight / (self.max_round - 1),
-                x2 = self.rankings[parseInt(target)] * self.graphWidth / self.n_display_nodes,
-                y2 = parseInt(r) * self.graphHeight / (self.max_round - 1);
-
-              var p1 = [x1, y1]
-              var p2 = [(x2 + 3 * x1) / 4, (y1 + y2) / 2]
-              var p3 = [(3 * x2 + x1) / 4, (y1 + y2) / 2]
-              var p4 = [x2, y2]
-
-              line_data.push({
-                'points': [p1, p2, p3, p4],
-                'attr': {"source": parseInt(source), "target": parseInt(target), "value": d.value, "count": d.count, "round": parseInt(r)}
-              })
-            }
-          }
-        }
-      }
-      //console.log("line_data:", line_data)
-
-      // draw links between proc. nodes 
-      line_data.forEach(function (line) {
-        self.proc_link.append('path')
-          .datum(line.points)
-          .attr("d", self.lineGenaretor)
-          .attr("id", "line-" + line.attr.round + line.attr.source + line.attr.target)
-          .attr("fill", "none")
-          .attr('class', 'proc-link')
-          .attr('source', line.attr.source)
-          .attr('target', line.attr.target)
-          .attr("round", line.attr.round)
-          .attr("value", line.attr.value)
-          .attr("count", line.attr.count)
-          .attr("stroke-width", function (d) {
-            if (line.attr.value > 100)
-              return (line.attr.value - self.min_value) * (3.0 - 0.3) / (self.max_value - self.min_value) + 0.3;
-            else {
-              if (line.attr.count > 0) 
-                return (line.attr.count - self.min_link_count) * (3.0 - 0.3) / (self.max_link_count - self.min_link_count) + 0.3;
-              else return 0;
-            }
-          })
-          .attr("stroke", function (d) {
-            if (line.attr.value > 0 && line.attr.count > 0) return "black" // both
-            if (line.attr.value > 0 && line.attr.count <= 0) return "green" // only particles
-            if (line.attr.value <= 0 && line.attr.count > 0) return "red" // only blocks
-            if (line.attr.value <= 0 && line.attr.count <= 0) return "white"
-          })// TODO
-          .attr("stroke-opacity", 0.1)
-      })
-*/
       self.drawProcLinks();
-
-/*
-      for (var r in self.node_json) {
-        for (var name in self.node_json[r]) {
-          var d = {
-            "name": name,
-            "count": self.node_json[r][name].count,
-            "localCount": self.node_json[r][name].localCount,
-            "workload": self.node_json[r][name].workload,
-            "estWorkload": self.node_json[r][name].estWorkload,
-            "npts": self.node_json[r][name].npts,
-            "nfdpts": self.node_json[r][name].nfdpts,
-            "round": r
-          }
-
-          self.node.append('circle')
-            .datum(d)
-            .attr('class', 'node')
-            //.attr('id', function (d, i) { return 'node-' + i })
-            .attr("round", d.round)
-            .attr("name", d.name)
-            .attr("r", function () {
-              if (d.name == self.n_nodes) return self.super_node_r;
-              else return (d.npts - d.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-            })
-            .attr("fill", function () {
-              if (d.name == self.n_nodes) return '#666'
-              else {
-                var linear = d3.scale.linear()
-                  .domain([self.min_wl[d.round - 1], self.max_wl[d.round - 1]])
-                  .range([0, 1]);
-
-                return self.compute(linear(d.workload));
-              }
-            })
-            .attr("opacity", "1.0")
-            .attr("cx", function () {
-              return self.rankings[d.name] * self.graphWidth / self.n_display_nodes;
-            })
-            .attr("cy", function () {
-              return (d.round - 1) * self.graphHeight / (self.max_round - 1);
-            })
-            .attr("stroke", "black")
-            .attr("stroke-width", function () {
-              if (d.name == self.n_nodes) return 0; // TODO 统一处理
-              else return (d.nfdpts - self.min_nfdpts) * self.max_node2_stroke_w / (self.max_nfdpts - self.min_nfdpts);
-            })
-            .on('click', function () {
-              if (d.name == self.n_nodes) alert("It is a super node!!");
-              else {
-                self.graphG.selectAll(".nodetexts").remove();
-                self.graphG.selectAll(".noderects").remove();
-                self.focused_round = self.focused_name = -1;
-
-                // select or disselect node
-                if (self.selected_nodes[d.round-1][d.name] == 1)
-                  self.selected_nodes[d.round-1][d.name] = 0;
-                else
-                  self.selected_nodes[d.round-1][d.name] = 1;
-
-                self.updateProcLinks(-1, -1);
-                self.updateProcNodes();
-                self.updateProcNodeRects();
-
-                if (self.isNoneNodesHighlighted()) self.recoveryProcNodesLinks();
-              }
-            })
-            .on('mouseover', function () { 
-              if (d.name != self.n_nodes) self.showDetails(d) 
-            })
-            .on("mouseout", function () { 
-              if (d.name != self.n_nodes) self.hideDetails()
-            })
-            .on('contextmenu', function () { 
-              if (d.name == self.n_nodes) alert("It is a super node!!");
-              else {
-                var focused_node = {"name": d.name, "round": d.round}; 
-                d3.event.preventDefault();
-                console.log('contextmenu')
-                self.menu(d3.mouse(this)[0]+20, d3.mouse(this)[1], focused_node);
-              }
-            });
-        }
-      }
-*/
       self.drawProcNodes();
 
       // draw nodes with max workload TODO
@@ -530,24 +356,6 @@ export default {
           }
         }
 
-        /*
-        self.selected_block = -1; //
-      self.selected_nodes = [] //
-      self.highlighted_nodes = []; //         
-      self.nodes_source = []
-      self.nodes_target = [];
-      self.nodes_transfer = [];
-      self.indistpath_nodes = [];
-
-      self.outdistselected_nodes = [] //
-      self.indistselected_nodes = []; //
-      self.outdistnodes_target = [] //
-      self.indistnodes_source = []; //
-
-      self.focused_round = -1 //
-      self.focused_name = -1; //
-        */
-
         if (self.filtered_nodes[self.focused_name] != 1) {
           self.focused_round = -1;
           self.focused_name = -1;
@@ -613,26 +421,6 @@ export default {
     {
       var self = this
 
-/*
-      self.links.forEach(function (d) {
-        if (d.value > 0 || d.count > 0) {
-          var x1 = self.rankings[d.source] * self.graphWidth / self.n_nodes,
-            y1 = (d.round - 1) * self.graphHeight / (self.max_round - 1),
-            x2 = self.rankings[d.target] * self.graphWidth / self.n_nodes,
-            y2 = d.round * self.graphHeight / (self.max_round - 1);
-
-          var p1 = [x1, y1]
-          var p2 = [(x2 + 3 * x1) / 4, (y1 + y2) / 2]
-          var p3 = [(3 * x2 + x1) / 4, (y1 + y2) / 2]
-          var p4 = [x2, y2]
-
-          line_data.push({
-            'points': [p1, p2, p3, p4],
-            'attr': {"source": d.source, "target": d.target, "value": d.value, "count": d.count, "round": d.round}
-          })
-        }
-      })
-*/
       self.drawProcLinks();
 
       self.graphG.selectAll(".noderects").remove();
@@ -752,9 +540,6 @@ export default {
         self.dist_json[d.round][name][d.blockid].isLocal = self.dist_json[d.round][name][d.blockid].isLocal==1 ? 1 : d.isLocal
       })
 
-      //console.log("770 dist_json", Object.keys(self.dist_json))
-      //console.log(self.dist_json[1][1])
-
       // transfer_json
       self.transfer_json = {}
       transfers.forEach(function (d, i) {
@@ -805,39 +590,6 @@ export default {
       }
 
       console.log(self.min_npts, self.max_npts, self.min_nfdpts, self.max_nfdpts, self.min_nufdpts, self.max_nufdpts)
-/*
-      // 根据数据和rankings计算最值 TODO
-      for (var i = 0; i < self.max_round; i++) {
-        self.min_wl[i] = 1000000000;
-        self.max_wl[i] = 0;
-
-        nodes.forEach(function (d, j) { 
-          if (d.round == i + 1 && self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) {
-            self.min_wl[i] = Math.min(self.min_wl[i], parseInt(d.workload))
-            self.max_wl[i] = Math.max(self.max_wl[i], parseInt(d.workload))
-          }
-        });
-      }
-
-      self.min_npts = d3.min(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.npts 
-      });
-      self.max_npts = d3.max(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.npts 
-      });
-      self.min_nfdpts = d3.min(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.nfdpts 
-      });
-      self.max_nfdpts = d3.max(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.nfdpts 
-      });
-      self.min_nufdpts = d3.min(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.npts - d.nfdpts 
-      });
-      self.max_nufdpts = d3.max(self.nodes, function (d) { 
-        if (self.filtered_nodes[d.name] == 1 && d.name != self.n_nodes) return d.npts - d.nfdpts 
-      });
-*/
 
       self.min_value = 1000000000
       self.max_value = 0
@@ -858,12 +610,6 @@ export default {
       }
 
       console.log(self.min_value, self.max_value, self.min_link_count, self.max_link_count)
-/*
-      self.min_value = d3.min(self.links, function (d) { return d.value }); // super node 的也一同考虑进去了
-      self.max_value = d3.max(self.links, function (d) { return d.value }); // 
-      self.min_link_count = d3.min(self.links, function (d) { return d.count }); // 
-      self.max_link_count = d3.max(self.links, function (d) { return d.count }); // 
-*/
     }, 
 
     drawProcNodes()
@@ -1034,34 +780,7 @@ export default {
             })
         }
       }
-/*
-      self.graphG.selectAll(".rects").data(self.nodes).enter().append('rect')
-        .attr("class", "noderects")
-        .attr("x", function (d) {
-          return self.rankings[d.name] * self.graphWidth / self.n_display_nodes - self.rect_xOffset;
-        })
-        .attr("y", function (d) {
-          return (d.round - 1) * self.graphHeight / (self.max_round - 1) - self.rect_yOffset;
-        })
-        .attr("width", function (d) {
-          if (self.selected_nodes[d.round-1][d.name] == 1)
-            return self.rect_xOffset*2;
-          else return 0;
-        })
-        .attr("height", function (d) {
-          if (self.selected_nodes[d.round-1][d.name] == 1)
-            return self.graphHeight / (self.max_round - 1) + self.rect_yOffset*2;
-          else return 0;
-        })
-        .attr("opacity", function (d) {
-          if (self.selected_nodes[d.round-1][d.name] == 1) return 1;
-          else return 0;
-        })
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-dasharray", 5)
-        .attr("stroke-width", 1);
-*/
+
       self.graphG.selectAll(".rects").data(rnodes).enter().append('rect')
         .attr("class", "noderects")
         .attr("x", function (d) {
@@ -1087,13 +806,7 @@ export default {
       var hnodes = []
       for (var i = 0; i < self.max_round; i ++) {
         self.highlighted_nodes[i] = {}
-/*
-        for (var j = 0; j < self.n_nodes; j ++) {
-          if (self.nodes_target[i][j] == 1 || self.nodes_source[i][j] == 1 || self.outdistselected_nodes[i][j] == 1 || self.outdistnodes_target[i][j] > 0 || self.indistselected_nodes[i][j] == 1 || self.indistnodes_source[i][j] > 0 || self.nodes_transfer[i][j] == 1 || 
-            self.indistpath_nodes[i][j] == 1)
-            self.highlighted_nodes[i][j] = 1;
-        }
-*/
+
         for (var j = 0; j < self.display_nodes_array.length; j ++) {
           var dnode = self.display_nodes_array[j]
 
@@ -1144,22 +857,6 @@ export default {
           return (d.round - 1) * self.graphHeight / (self.max_round - 1);
         });
 
-/*
-      self.graphG.selectAll(".texts").data(self.nodes).enter().append("text")
-        .text(function (u) {
-          if (self.highlighted_nodes[u.round-1][u.name] == 1 && u.name != self.n_nodes)
-            return u.name;
-        })
-        .attr("class", "nodetexts")
-        .attr('x', function (u) {
-          return self.rankings[u.name] * self.graphWidth / self.n_display_nodes + self.node_text_xOffset;
-        })
-        .attr('y', function (u) {
-          return (u.round - 1) * self.graphHeight / (self.max_round - 1) + self.node_text_yOffset;
-        })
-        .attr('text-anchor', 'middle')
-        .style('font-size', self.node_text_size);
-*/
       self.graphG.selectAll(".texts").data(hnodes).enter().append("text")
         .text(function (u) {
           if (u.name != self.n_nodes) return u.name;
@@ -1237,16 +934,7 @@ export default {
       for (var i = 0; i < self.max_round; i ++) {
         self.nodes_transfer[i] = {}
         self.indistpath_nodes[i] = {};
-/*
-        for (var index in self.dist_json[i+1]) {
-          self.dist_json[i+1][index].forEach(function (u, j) {
-            if (u.blockid == blockid)  {
-              self.nodes_transfer[i][index] = 1;
-              self.indistpath_nodes[i][index] = 1;
-            }
-          })
-        }
-*/
+
         for (var name in self.dist_json[parseInt(i)+1]) {
           for (var bid in self.dist_json[parseInt(i)+1][name]) {
             if (parseInt(bid) == blockid) {
@@ -1266,23 +954,7 @@ export default {
           block_pos = {}
 
       var source; // for blockid >= 0
-/*
-      for(var jsource in self.transfer_json[round-1]) {
-        for (var jtarget in self.transfer_json[round-1][jsource]) {
-          self.transfer_json[round-1][jsource][jtarget].forEach(function (u) {
-            if (jtarget == name && (blockid >= 0 ? u.blockid == blockid : true)) {
-              blockIdList.push({"source": jsource, "target": jtarget, "blockid": u.blockid, "isLocal": u.isLocal})
-              block_pos[u.blockid] = []
 
-              source = jsource;
-
-              if (self.indistnodes_source[round-2][jsource]) self.indistnodes_source[round-2][jsource] += 1;
-              else self.indistnodes_source[round-2][jsource] = 1;
-            }
-          })
-        }
-      }
-*/
       for(var jsource in self.transfer_json[round-1]) {
         for (var jtarget in self.transfer_json[round-1][jsource]) {
           for (var bid in self.transfer_json[round-1][jsource][jtarget]) {
@@ -1311,14 +983,6 @@ export default {
 
       var pnode_r;
 
-/*
-      self.node_json[round].forEach(function (s) {
-        if (s.name == name) {
-          if (name == self.n_nodes) pnode_r = self.super_node_r;
-          else pnode_r = (s.npts - s.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-        }
-      })
-*/
       for (var jname in self.node_json[round]) {
         var s = self.node_json[round][jname]
 
@@ -1332,14 +996,6 @@ export default {
         blockIdList.forEach(function (u) {
           var snode_r;
 
-/*
-          self.node_json[round-1].forEach(function (s) {
-            if (s.name == u.source) {
-              if (s.name == self.n_nodes) snode_r = self.super_node_r
-              else snode_r = (s.npts - s.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-            }
-          })
-*/
           for (var jname in self.node_json[parseInt(round)-1]) {
             var s = self.node_json[parseInt(round)-1][jname]
 
@@ -1400,12 +1056,7 @@ export default {
           .attr("stroke-width", 1)
 
         var max_his_workload = 0, min_his_workload = 1000000000;
-/*
-        self.dist_json[round][name].forEach(function (u) {
-          max_his_workload = Math.max(max_his_workload, u.workload);
-          min_his_workload = Math.min(min_his_workload, u.workload);
-        })
-*/
+
         for (var bid in self.dist_json[round][name]) {
           var u = self.dist_json[round][name][bid]
           max_his_workload = Math.max(max_his_workload, u.workload);
@@ -1434,11 +1085,6 @@ export default {
               .range([0, 1]);
 
             var workload = 0;
-/*
-            self.dist_json[round][name].forEach(function (s) {
-              if (u.blockid == s.blockid) workload = s.workload
-            })
-*/
             if (self.dist_json[round][name][u.blockid]) {
               workload = self.dist_json[round][name][u.blockid].workload
             }
@@ -1472,11 +1118,6 @@ export default {
           .append("title")
           .text(function (u) { 
             var workload = 0;
-/*
-            self.dist_json[round][name].forEach(function (s) {
-              if (u.blockid == s.blockid) workload = s.workload
-            })
-*/
             if (self.dist_json[round][name][u.blockid]) {
               workload = self.dist_json[round][name][u.blockid].workload
             }
@@ -1489,10 +1130,6 @@ export default {
           });
 
         if (blockid >= 0) { // for connecting outdist blocks and indist blocks (along the block transfer path)
-/*
-          for (var i = 0; i < self.n_limited_nodes; i ++)
-            if (self.outdistselected_nodes[round-2][i] == 1 && i == source) return;
-*/
           for (var i = 0; i < self.display_nodes_array.length; i ++) {
             var dnode = self.display_nodes_array[i]; // dnode 永远不会是 第n_nodes结点
             if (self.outdistselected_nodes[round-2][dnode] == 1 && dnode == source) return;
@@ -1502,14 +1139,6 @@ export default {
         blockIdList.forEach(function (u) {
           var snode_r;
 
-/*
-          self.node_json[round-1].forEach(function (s) {
-            if (s.name == u.source) {
-              if (s.name == self.n_nodes) snode_r = self.super_node_r;
-              else snode_r = (s.npts - s.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-            }
-          })
-*/
           for (var jname in self.node_json[parseInt(round)-1]) {
             var s = self.node_json[parseInt(round)-1][jname]
 
@@ -1556,17 +1185,7 @@ export default {
     removeInBlockDist(round, name, blockid)
     {
       var self = this;
-/*
-      for(var jsource in self.transfer_json[round-1]) {
-        for (var jtarget in self.transfer_json[round-1][jsource]) {
-          self.transfer_json[round-1][jsource][jtarget].forEach(function (u) {
-            if (jtarget == name && (blockid >= 0 ? u.blockid == blockid : true)) {
-              self.indistnodes_source[round-2][jsource] = Math.max(self.indistnodes_source[round-2][jsource]-1, 0);
-            }
-          })
-        }
-      }
-*/
+
       for(var source in self.transfer_json[round-1]) {
         for (var target in self.transfer_json[round-1][source]) {
           for (var bid in self.transfer_json[round-1][source][target]) {
@@ -1589,27 +1208,6 @@ export default {
           block_pos = {}
 
       var block2proc = [];
-/*
-      for(var index in self.transfer_json[round][name]){
-        self.transfer_json[round][name][index].forEach(function (u){
-
-          block2proc.push({
-            "target": index,
-            "blockid": u.blockid
-          })
-
-          if (self.filtered_nodes[index] == 1) {
-            if (self.outdistnodes_target[round][index]) self.outdistnodes_target[round][index] += 1;
-            else self.outdistnodes_target[round][index] = 1;
-          }
-
-          if(blockIdList.indexOf(u.blockid) == -1) {
-            blockIdList.push(u.blockid)
-            block_pos[u.blockid] = []
-          }
-        })
-      }
-*/
       for(var target in self.transfer_json[round][name]){
         for (var bid in self.transfer_json[round][name][target]) {
           block2proc.push({
@@ -1640,14 +1238,7 @@ export default {
           x1 = Math.min(x1, self.graphWidth - self.max_block_rect_w * (block_len+2));
 
       var pnode_r;
-/*
-      self.node_json[round].forEach(function (s) {
-        if (s.name == name) {
-          if (name == self.n_nodes) pnode_r = self.super_node_r // cannot happen
-          else pnode_r = (s.npts - s.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-        }
-      })
-*/
+
       for (var jname in self.node_json[round]) {
         var s = self.node_json[round][jname]
 
@@ -1683,18 +1274,6 @@ export default {
         block2proc.forEach(function (u) {
           if (u.blockid == d)  {
             if (self.filtered_nodes[u.target] == 1) {
-/*
-              self.dist_json[round+1][u.target].forEach(function (s) {
-                if (s.blockid == u.blockid)
-                  blkwl[d] += s.workload
-              })
-*/
-/*
-              for (var bid in self.dist_json[round+1][u.target]) {
-                var s = self.dist_json[round+1][u.target][bid]
-                if (bid == u.blockid) blkwl[d] += s.workload
-              }
-*/
               if (self.dist_json[parseInt(round)+1][u.target][u.blockid])
                 blkwl[d] += self.dist_json[parseInt(round)+1][u.target][u.blockid].workload
             } else flag = 1
@@ -1723,13 +1302,6 @@ export default {
         .attr("height", self.max_block_rect_h)
         .attr("fill", function (u, i) {
           var flag = 0
-/*
-          if (self.transfer_json[round][name][self.n_nodes+1]) {
-            self.transfer_json[round][name][self.n_nodes+1].forEach(function (s){
-              if(s.blockid == u) flag = 1
-            })
-          }
-*/
           if (self.transfer_json[round][name][parseInt(self.n_nodes)+1]) {
             for (bid in self.transfer_json[round][name][parseInt(self.n_nodes)+1]) {
               if (parseInt(bid) == u) flag = 1
@@ -1791,14 +1363,6 @@ export default {
           if (self.filtered_nodes[parseInt(target)] == 1) {
             var snode_r;
 
-/*
-            self.node_json[round+1].forEach(function (s) {
-              if (s.name == target) {
-                if (s.name == self.n_nodes) snode_r = self.super_node_r;
-                else snode_r = (s.npts - s.nfdpts - self.min_nufdpts) * (self.max_node2_r - self.min_node2_r) / (self.max_npts - self.min_nufdpts) + self.min_node2_r;
-              }
-            })
-*/
             for (var jname in self.node_json[parseInt(round)+1]) {
               var s = self.node_json[parseInt(round)+1][jname]
 
@@ -1850,22 +1414,13 @@ export default {
     removeOutBlockDist(round, name)
     {
       var self = this;
-/*
-      for(var index in self.transfer_json[round][name]){
-        self.transfer_json[round][name][index].forEach(function (u){
-          if (self.filtered_nodes[index] == 1)
-            self.outdistnodes_target[round][index] = Math.max(self.outdistnodes_target[round][index]-1, 0);
-        })
-      }
-*/
+
       for(var target in self.transfer_json[round][name]) {
         for (var bid in self.transfer_json[round][name][target]) {
           //if (self.filtered_nodes[parseInt(target)] == 1)
           self.outdistnodes_target[round][parseInt(target)] = Math.max(self.outdistnodes_target[round][parseInt(target)]-1, 0);
         }
       }
-
-      // console.log("self.outdistnodes_target", self.outdistnodes_target)
 
       d3.selectAll('.out_block_dist'+round+name).remove();
       d3.selectAll('.out_block_dist_rect'+round+name).remove();
@@ -1878,22 +1433,6 @@ export default {
       self.graphG.selectAll(".nodetexts").remove();
       if (blockid == self.selected_block) {
         for (var i = 1; i < self.max_round; i ++) {
-/*
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistpath_nodes[i][j] == 1) {
-              if (self.indistselected_nodes[i][j] == 1) 
-                self.updateBlockTransferPathRelated(i+1, j, -1);
-              else {
-                self.removeInBlockDist(i+1, j, self.selected_block);
-
-                if (self.outdistselected_nodes[i-1][j] == 1) { // for connecting outdist blocks and indist blocks (along the block transfer path)
-                  self.removeOutBlockDist(i, j);
-                  self.addOutBlockDist(i, j, -1)
-                }
-              }
-            }
-          }
-*/
           for (var j = 0; j < self.display_nodes_array.length; j ++) {
             var dnode = self.display_nodes_array[j];
 
@@ -1921,22 +1460,6 @@ export default {
       else {
         // remove previous one first
         for (var i = 1; i < self.max_round; i ++) {
-/*
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistpath_nodes[i][j] == 1) {
-              if (self.indistselected_nodes[i][j] == 1) 
-                self.updateBlockTransferPathRelated(i+1, j, -1);
-              else {
-                self.removeInBlockDist(i+1, j, self.selected_block);
-
-                if (self.outdistselected_nodes[i-1][j] == 1) { // for connecting outdist blocks and indist blocks (along the block transfer path)
-                  self.removeOutBlockDist(i, j);
-                  self.addOutBlockDist(i, j, -1)
-                }
-              }
-            }
-          }
-*/
           for (var j = 0; j < self.display_nodes_array.length; j ++) {
             var dnode = self.display_nodes_array[j];
 
@@ -1959,21 +1482,6 @@ export default {
         self.computeBlockPathBlocks(self.selected_block);
 
         for (var i = 1; i < self.max_round; i ++) {
-/*
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistpath_nodes[i][j] == 1) {
-              if (self.indistselected_nodes[i][j] == 1) 
-                self.updateBlockTransferPathRelated(i+1, j, self.selected_block);
-              else {
-                self.addInBlockDist(i+1, j, self.selected_block);
-                if (self.outdistselected_nodes[i-1][j] == 1) { // for connecting outdist blocks and indist blocks (along the block transfer path)
-                  self.removeOutBlockDist(i, j);
-                  self.addOutBlockDist(i, j, 0)
-                }
-              }
-            }
-          }
-*/
           for (var j = 0; j < self.display_nodes_array.length; j ++) {
             var dnode = self.display_nodes_array[j];
 
@@ -2047,41 +1555,6 @@ export default {
       var self = this;
 
       for (var i = 0; i < self.max_round; i ++) { // TODO to be improved
-/*
-        for (var j = 0; j < self.n_nodes; j ++) {
-          d3.selectAll(".out_block_dist"+(i+1)+j)
-            .attr("stroke", function () {
-              if (d3.select(this).attr('id') == self.selected_block) {
-                if (d3.select(this).attr('isLocal') == 1) return "red";
-                else return 'green'
-              } else return "black"
-            })
-            .attr("stroke-width", function () {
-              if (d3.select(this).attr('id') == u || d3.select(this).attr('id') == self.selected_block) return 1.5;
-              else return 1;
-            })
-            .attr("stroke-opacity", function () {
-              if (d3.select(this).attr('id') == u || d3.select(this).attr('id') == self.selected_block) return 1;
-              else return 0.3;
-            })
-
-          d3.selectAll(".in_block_dist"+(i+1)+j)
-            .attr("stroke", function () {
-              if (d3.select(this).attr('id') == self.selected_block) {
-                if (d3.select(this).attr('isLocal') == 1) return "red";
-                else return 'green'
-              } else return "black"
-            })
-            .attr("stroke-width", function () {
-              if (d3.select(this).attr('id') == u || d3.select(this).attr('id') == self.selected_block) return 1.5;
-              else return 1;
-            })
-            .attr("stroke-opacity", function () {
-              if (d3.select(this).attr('id') == u || d3.select(this).attr('id') == self.selected_block) return 1;
-              else return 0.3;
-            })
-        }
-*/
         for (var j = 0; j < self.display_nodes_array.length; j ++) {
           var dnode = self.display_nodes_array[j];
 
@@ -2125,41 +1598,6 @@ export default {
       var self = this;
 
       for (var i = 0; i < self.max_round; i ++) { // TODO to be improved
-/*
-        for (var j = 0; j < self.n_nodes; j ++) {
-          d3.selectAll(".out_block_dist"+(i+1)+j)
-            .attr("stroke", function () {
-              if (d3.select(this).attr('id') == self.selected_block) {
-                if (d3.select(this).attr('isLocal') == 1) return "red";
-                else return 'green'
-              } else return 'black'
-            })
-            .attr("stroke-width", function () {
-              if (d3.select(this).attr('id') == self.selected_block) return 1.5
-              else return 1;
-            })
-            .attr("stroke-opacity", function () {
-              if (d3.select(this).attr('id') == self.selected_block) return 1
-              else return 0.3;
-            })
-
-          d3.selectAll(".in_block_dist"+(i+1)+j)
-            .attr("stroke", function () {
-              if (d3.select(this).attr('id') == self.selected_block) {
-                if (d3.select(this).attr('isLocal') == 1) return "red";
-                else return 'green'
-              } else return 'black'
-            })
-            .attr("stroke-width", function () {
-              if (d3.select(this).attr('id') == self.selected_block) return 1.5
-              else return 1;
-            })
-            .attr("stroke-opacity", function () {
-              if (d3.select(this).attr('id') == self.selected_block) return 1
-              else return 0.3;
-            })
-        }
-*/
         for (var j = 0; j < self.display_nodes_array.length; j ++) {
           var dnode = self.display_nodes_array[j];
 
@@ -2204,11 +1642,6 @@ export default {
       var self = this;
 
       for (var i = 0; i < self.max_round; i ++) {
-/*
-        for (var j = 0; j < self.n_nodes; j ++) {
-          if (self.highlighted_nodes[i][j] == 1) return false;
-        }
-*/
         for (var j = 0; j < self.display_nodes_array.length; j ++) {
           var dnode = self.display_nodes_array[j];
           if (self.highlighted_nodes[i][dnode] == 1) return false;
@@ -2322,18 +1755,6 @@ export default {
               if (self.outdistselected_nodes[round-1][name] == 1) {
                 self.outdistselected_nodes[round-1][name] = 0;
                 self.removeOutBlockDist(round, name);
-/*
-                for(var target in self.transfer_json[round][name]) {
-                  self.transfer_json[round][name][target].forEach(function (u) {
-                    if (self.filtered_nodes[target] == 1)
-                    {
-                      if (self.indistpath_nodes[round][target] == 1 && self.indistselected_nodes[round][target] != 1) {
-                        self.addInBlockDist(round+1, target, self.selected_block);
-                      }
-                    }
-                  })
-                }
-*/
                 for(var target in self.transfer_json[round][name]) {
                   for (var bid in self.transfer_json[round][name][target]) {
                     if (self.filtered_nodes[parseInt(target)] == 1) {
@@ -2348,19 +1769,6 @@ export default {
               else {
                 self.outdistselected_nodes[round-1][name] = 1;
                 self.addOutBlockDist(round, name, 0);
-/*
-                for(var target in self.transfer_json[round][name]) {
-                  self.transfer_json[round][name][target].forEach(function (u) {
-                    if (self.filtered_nodes[target] == 1)
-                    {
-                      if (self.indistpath_nodes[round][target] == 1 && self.indistselected_nodes[round][target] != 1) {
-                        self.removeInBlockDist(round+1, target, self.selected_block);
-                        self.addInBlockDist(round+1, target, self.selected_block);
-                      }
-                    }
-                  })
-                }
-*/
                 for(var target in self.transfer_json[round][name]) {
                   for (var bid in self.transfer_json[round][name][target]) {
                     if (self.filtered_nodes[parseInt(target)] == 1) {
