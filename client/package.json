@@ -85,7 +85,7 @@
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
     "phantomjs-prebuilt": "^2.1.14",
-    "popper.js": "^1.12.7",
+    "popper.js": "^1.14.1",
     "portfinder": "^1.0.13",
     "rimraf": "^2.6.0",
     "selenium-server": "^3.0.1",
