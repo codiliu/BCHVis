@@ -356,23 +356,7 @@ export default {
           self.focused_round = -1;
           self.focused_name = -1;
         }
-/*
-        for (var i = 1; i < self.max_round; i ++) {
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistselected_nodes[i][j] == 1) {
-              self.addInBlockDist(i+1, j, -1)
-            }
-          }
-        }
 
-        for (var i = 0; i < self.max_round; i ++) {
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.outdistselected_nodes[i][j] == 1) {
-              self.addOutBlockDist(i+1, j, 0)
-            }
-          }
-        }
-*/
         if (self.selected_block != -1) {
           self.computeBlockPathBlocks(self.selected_block);
           for (var i = 1; i < self.max_round; i ++) {
@@ -392,33 +376,47 @@ export default {
               }
             }
           }
-        }
 
-
-
-        for (var i = 1; i < self.max_round; i ++) {
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistselected_nodes[i][j] == 1) {
-              if (self.indistpath_nodes[i][j] == 1) 
-                self.removeInBlockDist(i+1, j, self.selected_block);
-              self.addInBlockDist(i+1, j, -1);
+          for (var i = 1; i < self.max_round; i ++) {
+            for (var j = 0; j < self.n_nodes; j ++) {
+              if (self.indistselected_nodes[i][j] == 1) {
+                if (self.indistpath_nodes[i][j] == 1) 
+                  self.removeInBlockDist(i+1, j, self.selected_block);
+                self.addInBlockDist(i+1, j, -1);
+              }
             }
           }
-        }
 
-        for (var i = 0; i < self.max_round; i ++) {
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.outdistselected_nodes[i][j] == 1) {
-              self.addOutBlockDist(i+1, j, 0);
-              for(var target in self.transfer_json[parseInt(i)+1][j]) {
-                for (var bid in self.transfer_json[parseInt(i)+1][j][target]) {
-                  if (self.filtered_nodes[parseInt(target)] == 1) {
-                    if (self.indistpath_nodes[parseInt(i)+1][parseInt(target)] == 1 && self.indistselected_nodes[parseInt(i)+1][parseInt(target)] != 1) {
-                      self.removeInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
-                      self.addInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
+          for (var i = 0; i < self.max_round; i ++) {
+            for (var j = 0; j < self.n_nodes; j ++) {
+              if (self.outdistselected_nodes[i][j] == 1) {
+                self.addOutBlockDist(i+1, j, 0);
+                for(var target in self.transfer_json[parseInt(i)+1][j]) {
+                  for (var bid in self.transfer_json[parseInt(i)+1][j][target]) {
+                    if (self.filtered_nodes[parseInt(target)] == 1) {
+                      if (self.indistpath_nodes[parseInt(i)+1][parseInt(target)] == 1 && self.indistselected_nodes[parseInt(i)+1][parseInt(target)] != 1) {
+                        self.removeInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
+                        self.addInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
+                      }
                     }
                   }
                 }
+              }
+            }
+          }
+        } else {
+          for (var i = 1; i < self.max_round; i ++) {
+            for (var j = 0; j < self.n_nodes; j ++) {
+              if (self.indistselected_nodes[i][j] == 1) {
+                self.addInBlockDist(i+1, j, -1)
+              }
+            }
+          }
+
+          for (var i = 0; i < self.max_round; i ++) {
+            for (var j = 0; j < self.n_nodes; j ++) {
+              if (self.outdistselected_nodes[i][j] == 1) {
+                self.addOutBlockDist(i+1, j, 0)
               }
             }
           }
