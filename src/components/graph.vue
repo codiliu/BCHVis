@@ -319,16 +319,12 @@ export default {
         self.graphG.selectAll(".nodetexts").remove();
 
         for (var i = 0; i < self.max_round; i ++) {
-          for (var j = 0; j < self.n_nodes; j ++) {
-            if (self.indistselected_nodes[i][j] == 1 || self.indistpath_nodes[i][j] == 1) {
-              d3.selectAll('.in_block_dist'+(i+1)+j).remove();
-              d3.selectAll('.in_block_dist_rect'+(i+1)+j).remove();
-            }
+          for (var j = 0; j <= self.n_nodes; j ++) {
+            d3.selectAll('.in_block_dist'+(i+1)+j).remove();
+            d3.selectAll('.in_block_dist_rect'+(i+1)+j).remove();
 
-            if (self.outdistselected_nodes[i][j] == 1) {
-              d3.selectAll('.out_block_dist'+(i+1)+j).remove();
-              d3.selectAll('.out_block_dist_rect'+(i+1)+j).remove();
-            }
+            d3.selectAll('.out_block_dist'+(i+1)+j).remove();
+            d3.selectAll('.out_block_dist_rect'+(i+1)+j).remove();
           }
         }
 
@@ -360,7 +356,7 @@ export default {
           self.focused_round = -1;
           self.focused_name = -1;
         }
-
+/*
         for (var i = 1; i < self.max_round; i ++) {
           for (var j = 0; j < self.n_nodes; j ++) {
             if (self.indistselected_nodes[i][j] == 1) {
@@ -376,7 +372,7 @@ export default {
             }
           }
         }
-
+*/
         if (self.selected_block != -1) {
           self.computeBlockPathBlocks(self.selected_block);
           for (var i = 1; i < self.max_round; i ++) {
@@ -391,6 +387,36 @@ export default {
                   if (self.outdistselected_nodes[i-1][dnode] == 1) { // for connecting outdist blocks and indist blocks (along the block transfer path)
                     self.removeOutBlockDist(i, dnode);
                     self.addOutBlockDist(i, dnode, 0)
+                  }
+                }
+              }
+            }
+          }
+        }
+
+
+
+        for (var i = 1; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.indistselected_nodes[i][j] == 1) {
+              if (self.indistpath_nodes[i][j] == 1) 
+                self.removeInBlockDist(i+1, j, self.selected_block);
+              self.addInBlockDist(i+1, j, -1);
+            }
+          }
+        }
+
+        for (var i = 0; i < self.max_round; i ++) {
+          for (var j = 0; j < self.n_nodes; j ++) {
+            if (self.outdistselected_nodes[i][j] == 1) {
+              self.addOutBlockDist(i+1, j, 0);
+              for(var target in self.transfer_json[parseInt(i)+1][j]) {
+                for (var bid in self.transfer_json[parseInt(i)+1][j][target]) {
+                  if (self.filtered_nodes[parseInt(target)] == 1) {
+                    if (self.indistpath_nodes[parseInt(i)+1][parseInt(target)] == 1 && self.indistselected_nodes[parseInt(i)+1][parseInt(target)] != 1) {
+                      self.removeInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
+                      self.addInBlockDist(parseInt(i)+2, parseInt(target), self.selected_block);
+                    }
                   }
                 }
               }
@@ -1129,7 +1155,7 @@ export default {
             //return u; 
           });
 
-        if (blockid >= 0) { // for connecting outdist blocks and indist blocks (along the block transfer path)
+        if (blockid >= 0) { // for connecting outdist blocks and indist blocks (along the block transfer path) 如果有outdistselected_node就不连
           for (var i = 0; i < self.display_nodes_array.length; i ++) {
             var dnode = self.display_nodes_array[i]; // dnode 永远不会是 第n_nodes结点
             if (self.outdistselected_nodes[round-2][dnode] == 1 && dnode == source) return;
@@ -1377,7 +1403,7 @@ export default {
                 x2 = self.rankings[parseInt(target)] * self.graphWidth / self.n_display_nodes, 
                 y2 = round * self.graphHeight / (self.max_round - 1) - snode_r; 
 
-            if (flag >= 0 && (self.indistpath_nodes[round][parseInt(target)] == 1 && self.indistselected_nodes[round][parseInt(target)] != 1 && parseInt(target) != self.n_nodes)) // for connecting outdist blocks and indist blocks (along the block transfer path)
+            if (flag >= 0 && (self.indistpath_nodes[round][parseInt(target)] == 1 && self.indistselected_nodes[round][parseInt(target)] != 1 && parseInt(target) != self.n_nodes)) // for connecting outdist blocks and indist blocks (along the block transfer path) 如果有在block transfer path上的node，那么把线指向其上方的block
               y2 = y2 + snode_r - self.node_r * 1.1 - self.max_block_rect_h;
             
             var p1 = [x1, y1]
@@ -1737,8 +1763,9 @@ export default {
               if (self.indistselected_nodes[round-1][name] == 1) {
                 self.indistselected_nodes[round-1][name] = 0;
                 self.removeInBlockDist(round, name, -1);
-                if (self.indistpath_nodes[round-1][name] == 1) 
+                if (self.indistpath_nodes[round-1][name] == 1) {
                   self.addInBlockDist(round, name, self.selected_block);
+                }
               }
               else {
                 self.indistselected_nodes[round-1][name] = 1;
