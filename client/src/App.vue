@@ -23,7 +23,7 @@ import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'app',
-  components: { searchBox },
+  components: { searchBox, timeline},
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
@@ -60,41 +60,41 @@ export default {
       })
     }
   },
-  async created() {
-    var self = this
+  // async created() {
+  //   var self = this
 
-    var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
+  //   var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
 
-    sendAddress(address)
-    function sendAddress(address) {
-      var constraint = {}
-      var formData = new URLSearchParams();
-      constraint['address'] = address;
-      constraint = JSON.stringify(constraint)
-      formData.append('constraint', constraint)
-      sendUrl('searchAddress', formData, 'address', address)
-    }
+  //   sendAddress(address)
+  //   function sendAddress(address) {
+  //     var constraint = {}
+  //     var formData = new URLSearchParams();
+  //     constraint['address'] = address;
+  //     constraint = JSON.stringify(constraint)
+  //     formData.append('constraint', constraint)
+  //     sendUrl('searchAddress', formData, 'address', address)
+  //   }
 
-    // function sendTest () {
-    //   var constraint = {}
-    //   var formData = new URLSearchParams();
-    //   constraint = JSON.stringify(constraint)      
-    //   formData.append('constraint', constraint)
-    //   sendUrl ('ws', formData, 'test')
-    // }
+  //   // function sendTest () {
+  //   //   var constraint = {}
+  //   //   var formData = new URLSearchParams();
+  //   //   constraint = JSON.stringify(constraint)      
+  //   //   formData.append('constraint', constraint)
+  //   //   sendUrl ('ws', formData, 'test')
+  //   // }
 
 
-    function sendUrl(Url, formData, v_id, info) {
-      Url = 'http://127.0.0.1:22068/' + Url
-      console.log('Request: ', Url)
-      self.$api.post(Url, formData, data => {
-        self.setAddData([info, data])
-        console.log('get ' + v_id + 'success: ', data)
+  //   function sendUrl(Url, formData, v_id, info) {
+  //     Url = 'http://127.0.0.1:22068/' + Url
+  //     console.log('Request: ', Url)
+  //     self.$api.post(Url, formData, data => {
+  //       self.setAddData([info, data])
+  //       console.log('get ' + v_id + 'success: ', data)
 
-      })
-    }
+  //     })
+  //   }
    
-  }
+  // }
 }
 
 </script>
@@ -124,7 +124,6 @@ export default {
   }
 
   #timeline {
-    background: red;
     position: absolute;
     top: 10%;
     left: 5%;

@@ -88,16 +88,17 @@ def get_page(url):
 def filterData(address):
     url = "https://blockchain.info/rawaddr/" + address
     dataArr = get_page(url)
-    # for i in range(1, 10000):
-    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
-    #     url += str(i*50)
-    #     data = get_page(url)
-    #     try:
-    #         if len(data['txs']) == 0:
-    #             break
-    #         dataArr['txs'].extend(data['txs'])
-    #     except: 
-    #         break
+    for i in range(1, 10000):
+        print(i)
+        url = "https://blockchain.info/rawaddr/" + address +'?offset='
+        url += str(i*50)
+        data = get_page(url)
+        try:
+            if len(data['txs']) == 0:
+                break
+            dataArr['txs'].extend(data['txs'])
+        except: 
+            break
     return dataArr
 
 
@@ -138,6 +139,7 @@ class addressHandler(tornado.web.RequestHandler):
 
       data = filterData(address)
       #print(data)
+
       self.write(data)
 
     def get(self):
@@ -213,7 +215,9 @@ if __name__ == "__main__":
                   ],
         debug=True,
     )
-
+    data = filterData('1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z')
+    with open('data.json', 'w') as f:
+        json.dump(data, f)
 
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)

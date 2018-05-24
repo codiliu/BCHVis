@@ -17,7 +17,7 @@
     "babel-plugin-transform-object-assign": "^6.22.0",
     "bootstrap-vue": "^2.0.0-rc.2",
     "csv-loader": "^2.1.1",
-    "d3": "^3.5.17",
+    "d3": "^4.13.0",
     "d3-3": "0.0.0",
     "d3-tip": "^0.7.1",
     "font-awesome": "^4.7.0",
