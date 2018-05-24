@@ -84,6 +84,7 @@ portfinder.basePort = port
 console.log('> Starting dev server...')
 devMiddleware.waitUntilValid(() => {
   portfinder.getPort((err, port) => {
+    port = 20789
     if (err) {
       _reject(err)
     }

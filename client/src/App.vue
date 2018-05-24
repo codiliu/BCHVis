@@ -2,13 +2,13 @@
   <div id="app">
     <nav class="navbar navbar-default" role="navigation">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#">LBVis: Interactively Visualizing the Dynamic Load Balancing in Parallel Particle Tracing</a>
+        <a class="navbar-brand" href="#">Bitcoin Exlporation</a>
       </div>
     </nav>
     <div id="content">
       <myRank id="rank-container"></myRank>
       <myGlyph id="glyph-container"></myGlyph>
-      <myGraph id="load-balance-container"></myGraph>
+      <!-- <myGraph id="load-balance-container"></myGraph> -->
     </div>
   </div>
 </template>
@@ -37,25 +37,35 @@ export default {
     var self = this
 
     sendTest()
+    sendAddress()
 
-        function sendTest () {
-          var constraint = {}
-          var formData = new URLSearchParams();
-          constraint = JSON.stringify(constraint)      
-          formData.append('constraint', constraint)
-          sendUrl ('ws', formData, 'test')
-        }
+    function sendAddress () {
+      var constraint = {}
+      var formData = new URLSearchParams();
+      constraint['address'] = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z';
+      constraint = JSON.stringify(constraint)      
+      formData.append('constraint', constraint)
+      sendUrl ('searchAddress', formData, 'address')
+    }
 
+    function sendTest () {
+      var constraint = {}
+      var formData = new URLSearchParams();
+      constraint = JSON.stringify(constraint)      
+      formData.append('constraint', constraint)
+      sendUrl ('ws', formData, 'test')
+    }
+
+    function sendUrl (Url, formData, v_id){
+      Url='http://127.0.0.1:22068/'+Url
+      console.log('Request: ', Url)
+      self.$api.post(Url,formData, d => {
+        console.log('success: ', d)
+        
+      })
+    }   
        
-       
-        function sendUrl (Url, formData, v_id){
-          Url='http://127.0.0.1:22068/'+Url
-          console.log('Request: ', Url)
-          self.$api.post(Url,formData, d => {
-            console.log('success: ', d)
-            
-          })
-        }
+        
         
     var max_round = 15, n_nodes = 64 
 
@@ -115,25 +125,6 @@ export default {
               //"count": +d.count,
               "round": +d.round
             })
-/*
-            // store by json structure
-            d = {
-              "source": +d.source,
-              "target": +d.target,
-              "blockid": +d.blockid,
-              "isLocal": +d.isLocal,
-              //"count": +d.count,
-              "round": +d.round
-            }
-          
-            if(!transfer_json[d.round]) transfer_json[d.round] = {}
-            if(!transfer_json[d.round][d.source]) transfer_json[d.round][d.source] = {}
-
-            if(!transfer_json[d.round][d.source][d.target]) transfer_json[d.round][d.source][d.target] = []
-
-            //transfer_json[d.round][d.source][d.target].push(d.blockid)
-            transfer_json[d.round][d.source][d.target].push({"blockid": d.blockid, "isLocal": d.isLocal})
-*/
           }
         });
 
@@ -193,23 +184,6 @@ export default {
                     "count": +d.count,
                     "round": +d.round
                   });
-/*
-                  d = {
-                    "source": d.source,
-                    "target": d.target,
-                    "value": +d.value,
-                    "count": +d.count,
-                    //"count": +d.count,
-                    "round": +d.round
-                  }
-
-                  if (!link_json[d.round]) link_json[d.round] = {}
-                  if (!link_json[d.round][d.source]) link_json[d.round][d.source] = {}
-                  if (!link_json[d.round][d.source][d.target]) link_json[d.round][d.source][d.target] = {"value": 0, "count": 0}
-
-                  link_json[d.round][d.source][d.target].value += d.value
-                  link_json[d.round][d.source][d.target].count += d.count
-*/
                 }
               });
 
