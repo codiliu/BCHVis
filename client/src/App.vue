@@ -30,21 +30,15 @@ export default {
   watch: {
     addrData: function(data) {
       console.log(data)
-    },
-    newAddress: function(data) {
-      console.log(data)
     }
   },
   methods: {
     ...mapActions(['setAddData']),
-    ...mapGetters({
-      newAddress: 'getNewAddress',
-    }),
   },
   async created() {
     var self = this
 
-    let data = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
+    data = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
     var self = this
     sendAddress(data)
     function sendAddress(address) {
