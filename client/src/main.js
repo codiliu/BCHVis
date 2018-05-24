@@ -8,12 +8,9 @@ import router from './router'
 
 import store from './vuex/index'; //store
 import 'font-awesome/css/font-awesome.css';
-import "../static/css/iconfont.css";
 
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
-
-import '../plugins/uikit/css/uikit.min.css'
 
 
 // window.d3d4 = d3v4 
