@@ -132,13 +132,13 @@ class addressHandler(tornado.web.RequestHandler):
       self.set_header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
       constraint=self.get_argument('constraint')
       constraint = json.loads(constraint)
-      print(constraint)
+      #print(constraint)
       address=constraint['address']
-      print(address)
+      print("Search " + str(address))
 
       data = filterData(address)
-      print(data)
-      self.write({'suc':data})
+      #print(data)
+      self.write(data)
 
     def get(self):
       self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
