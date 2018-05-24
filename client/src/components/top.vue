@@ -6,7 +6,7 @@
             <Header :style="{position: 'fixed', width: '100%'}">
                 <Menu mode="horizontal" theme="dark" active-name="1">
                      <span style="font-family:PingFang SC;" > BitcoinVis </span>
-                     <Input id = 'input' v-model="address" @keyup.enter="submit" placeholder="Enter bitcoin address..." style="width: 400px"></Input>
+                     <Input id = 'input' v-model="address"  @keyup.enter.native="submit(address)" placeholder="Enter bitcoin address..." style="width: 400px"></Input>
                 </Menu>
             </Header>
          
@@ -28,7 +28,7 @@
                 console.log(data)
             }
         },
-        method: {
+        methods: {
             submit: function(data) {
                 console.log(data)
             }

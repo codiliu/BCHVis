@@ -1,2 +1,2 @@
-export const GRAPH_DATA = 'GRAPH_DATA';
-export const SELECT_ROUND = 'SELECT_ROUND';
+export const NEW_ADDRESS = 'NEW_ADDRESS';
+export const ADDRESS_ARR = 'ADDRESS_ARR';

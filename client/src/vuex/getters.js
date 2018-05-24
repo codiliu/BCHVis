@@ -1,5 +1,5 @@
 
 export default {
-	getGraphData: state=>state.graphData,
-	getSelectRound: state=>state.selectRound
+	getNewAddress: state=>state.newAddress,
+	getAddressArr: state=>state.addressArr
 }

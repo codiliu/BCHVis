@@ -1,9 +1,9 @@
 import * as types from './types';
 export default {
-  [types.GRAPH_DATA] (state, graphData) {
-    state.graphData = graphData
+  [types.NEW_ADDRESS] (state, newAddress) {
+    state.newAddress = newAddress
   },
-  [types.SELECT_ROUND] (state, selectRound) {
-    state.selectRound = selectRound
+  [types.ADDRESS_ARR] (state, newAddress) {
+    state.newAddress = newAddress
   },
 }

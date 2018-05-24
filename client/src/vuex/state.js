@@ -1,7 +1,6 @@
 import { playMode } from '../commons/config'
 const state = {
-  graphData: {},
-  selectRound: {},
-  loading: true
+  newAddress: null,
+  addressArr: []
 }
 export default state
