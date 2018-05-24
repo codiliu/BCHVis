@@ -5,6 +5,7 @@
       <searchBox> </searchBox>
     </div>
     <div id="timeline">
+      <timeline> </timeline>
     </div>
     <div id="graph">
     </div>
@@ -16,6 +17,7 @@
 // import myGraph from './components/graph.vue'
 // import myRank from './components/rank.vue'
 import searchBox from './components/top.vue'
+import timeline from './components/timeline.vue'
 import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'

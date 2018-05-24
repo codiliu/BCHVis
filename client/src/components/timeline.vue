@@ -1,32 +1,36 @@
-
-
 <template>
-    <div id="top">
-    </div>
+  <div id="timeline">
+  </div>
 </template>
-
-
 <script>
-    export default {
-        data () {
-            return {
-                address: ''
-            }
-        },
-        watch: {
-            address: function(data) {
-                console.log(data)
-            }
-        },
-        methods: {
-            submit: function(data) {
-                console.log(data)
-            }
-        }
-    }
-</script>
+import { mapActions, mapGetters } from 'vuex'
 
+export default {
+  data() {
+    return {
+      address: ''
+    }
+  },
+  computed: {
+    ...mapGetters({
+      addrData: 'getAddrData',
+      newAddress: 'getNewAddress'
+    })
+  },
+  watch: {
+    addrData: function(data) {
+      console.log(data)
+    }
+  },
+  methods: {
+    submit: function(data) {
+      console.log(data)
+    }
+  }
+}
+
+</script>
 <style scoped>
 
-</style>
 
+</style>
