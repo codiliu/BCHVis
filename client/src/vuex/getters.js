@@ -1,5 +1,6 @@
 
 export default {
-	getNewAddress: state=>state.newAddress,
-	getAddressArr: state=>state.addressArr
+
+	getAddrData: state=>state.addrData,
+    getNewAddress: state=>state.newAddress
 }

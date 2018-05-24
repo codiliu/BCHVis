@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import requests
+import time
+import random
+import json
 import tornado.ioloop
 import tornado.web
 import tornado.httpserver
@@ -9,7 +13,7 @@ from tornado.options import define, options
 import tornado.websocket
 import json, ast
 import numpy as np
-from pymongo import MongoClient
+from pymongo import  MongoClient
 
 # import frq_path_stat
 define("port", default=22068, type=int, help = "run on the given port")
@@ -33,6 +37,70 @@ def queryDatabase(databaseName):
     result.append(index)
   return result
 
+def extractData(data):
+    filterData={}
+    filterData['address']=data['address']
+    filterData['n_tx']=data['n_tx']
+    filterData['total_received']=data['total_received']
+    filterData['total_sent']=data['total_sent']
+    filterData['final_balance']=data['final_balance']
+    filterData['txs']=[]
+    for index in data['txs']:
+        record={}
+        record['inputs']=[]
+        record['outputs']=[]
+        record['block_height']=index['block_height']
+        record['time']=index['time']
+        record['tx_index']=index['tx_index']
+        record['hash']=index['hash']
+        
+        
+        for te in index['inputs']:
+            temp={}
+            temp['spent']=te['prev_out']['spent']
+            temp['tx_index']=te['prev_out']['tx_index']
+            temp['addr']=te['prev_out']['addr']
+            temp['value']=te['prev_out']['value']
+            record['inputs'].append(temp)
+            
+        for te in index['out']:
+            temp={}
+            
+            try:
+                temp['addr_tag_link']=te['addr_tag_link']
+            except:
+                temp['addr_tag_link']=""
+            temp['spent']=te['spent']
+            temp['tx_index']=te['tx_index']
+            temp['addr']=te['addr']
+            temp['value']=te['value']
+            record['outputs'].append(temp)
+        filterData['txs'].append(record)
+    return filterData
+
+
+
+def get_page(url):
+    user_agent_str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+    time.sleep(random.uniform(0,1))
+    return extractData(json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text))
+
+def filterData(address):
+    url = "https://blockchain.info/rawaddr/" + address
+    dataArr = get_page(url)
+    for i in range(1, 10000):
+        url = "https://blockchain.info/rawaddr/" + address +'?offset='
+        url += str(i*50)
+        data = get_page(url)
+        try:
+            if len(data['txs']) == 0:
+                break
+            dataArr['txs'].extend(data['txs'])
+        except: 
+            break
+    return dataArr
+
+
 def writeDatabase(databaseName,data):
   db = client['vastchallenge2017mc1']
   collection = db[databaseName]
@@ -54,6 +122,30 @@ class wsHandler(tornado.web.RequestHandler):
       self.set_header("Access-Control-Allow-Headers", "X-Requested-With");  
       self.set_header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
       print('...............checkClassNameHandler')
+      
+      self.write({'suc':'success'})
+
+class addressHandler(tornado.web.RequestHandler):
+    def post(self):
+      self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
+      self.set_header("Access-Control-Allow-Headers", "X-Requested-With");  
+      self.set_header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
+      constraint=self.get_argument('constraint')
+      constraint = json.loads(constraint)
+      #print(constraint)
+      address=constraint['address']
+      print("Search " + str(address))
+
+      data = filterData(address)
+      #print(data)
+      self.write(data)
+
+    def get(self):
+      self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
+      self.set_header("Access-Control-Allow-Headers", "X-Requested-With");  
+      self.set_header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
+      print('...............checkClassNameHandler')
+      
       self.write({'suc':'success'})
 
 
@@ -113,6 +205,7 @@ if __name__ == "__main__":
     app = tornado.web.Application(
         handlers=[
                   (r'/ws', wsHandler),
+                  (r'/searchAddress', addressHandler),
                   (r'/checkClassName', checkClassNameHandler),
                   # (r'/queryCarList', queryCarListHandler),
                   (r'/(.*)', tornado.web.StaticFileHandler, {'path': client_file_root_path,

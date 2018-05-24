@@ -1,9 +1,14 @@
 import * as types from './types';
 export default {
-  [types.NEW_ADDRESS] (state, newAddress) {
-    state.newAddress = newAddress
+
+  [types.ADD_DATA] (state, data) {
+  	state.addrData[data[0]]=data[1]
   },
-  [types.ADDRESS_ARR] (state, newAddress) {
-    state.newAddress = newAddress
+  [types.NEW_ADDRESS] (state, newAddress) {
+    state.newAddress=newAddress
+  },
+
+  [types.DEL_DATA] (state, addr) {
+    delete(state.addrData[addr])
   },
 }

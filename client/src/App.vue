@@ -1,4 +1,5 @@
 <template>
+
   <div id="app" class='layout'>
     <div id='top'>
       <searchBox> </searchBox>
@@ -21,42 +22,59 @@ import axios from 'axios'
 export default {
   name: 'app',
   components: { searchBox },
+  computed: {
+      ...mapGetters({
+        addrData: 'getAddrData'
+      })
+  },
+  watch: {
+    addrData: function(data) {
+      console.log(data)
+    },
+    newAddress: function(data) {
+      console.log(data)
+    }
+  },
   methods: {
-    ...mapActions(['setGraphData', 'setSelectRound']),
+    ...mapActions(['setAddData']),
+    ...mapGetters({
+      newAddress: 'getNewAddress',
+    }),
   },
   async created() {
-
-
     var self = this
 
-    // sendTest()
-
-    function sendTest() {
+    let data = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
+    var self = this
+    sendAddress(data)
+    function sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
+      constraint['address'] = address;
       constraint = JSON.stringify(constraint)
       formData.append('constraint', constraint)
-      sendUrl('ws', formData, 'test')
+      sendUrl('searchAddress', formData, 'address', address)
     }
 
+    // function sendTest () {
+    //   var constraint = {}
+    //   var formData = new URLSearchParams();
+    //   constraint = JSON.stringify(constraint)      
+    //   formData.append('constraint', constraint)
+    //   sendUrl ('ws', formData, 'test')
+    // }
 
 
-    function sendUrl(Url, formData, v_id) {
+    function sendUrl(Url, formData, v_id, info) {
       Url = 'http://127.0.0.1:22068/' + Url
       console.log('Request: ', Url)
-      self.$api.post(Url, formData, d => {
-        console.log('success: ', d)
+      self.$api.post(Url, formData, data => {
+        self.setAddData([info, data])
+        console.log('get ' + v_id + 'success: ', data)
 
       })
     }
-
-    // var dir = "static/resource/data" + n_nodes + "_2/"
-
-    // d3.csv(dir + "block_dist.csv", function(error, data_d1) {
-    //   if (error) throw error;
-
-    // })
-
+   
   }
 }
 
