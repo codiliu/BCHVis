@@ -24,23 +24,46 @@ export default {
   components: { searchBox },
   computed: {
       ...mapGetters({
-        addrData: 'getAddrData'
+        addrData: 'getAddrData',
+        newAddress: 'getNewAddress'
       })
   },
   watch: {
     addrData: function(data) {
       console.log(data)
-    }
+    },
+    newAddress: function(data){
+      console.log(data)
+      this.sendAddress(data)
+    },
   },
   methods: {
     ...mapActions(['setAddData']),
+    sendAddress(address) {
+      var constraint = {}
+      var formData = new URLSearchParams();
+      constraint['address'] = address;
+      constraint = JSON.stringify(constraint)
+      formData.append('constraint', constraint)
+      this.sendUrl('searchAddress', formData, 'address', address)
+    },
+    sendUrl(Url, formData, v_id, info) {
+      var self=this
+      Url = 'http://127.0.0.1:22068/' + Url
+      console.log('Request: ', Url)
+      self.$api.post(Url, formData, data => {
+        self.setAddData([info, data])
+        console.log('get ' + v_id + 'success: ', data)
+
+      })
+    }
   },
   async created() {
     var self = this
 
-    data = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
-    var self = this
-    sendAddress(data)
+    var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
+
+    sendAddress(address)
     function sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
