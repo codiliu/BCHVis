@@ -6,7 +6,8 @@ let config = {
 
   curtime :new Date(2016,11,17).getTime(),
 
-
+  incolor: '#a1d99b', 
+  outcolor: '#feb24c',
   //url
   
 }

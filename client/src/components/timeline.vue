@@ -5,6 +5,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 let d3 = require('d3')
+import config from '../commons/config'
 import $ from 'jquery'
 export default {
   data() {
@@ -45,7 +46,33 @@ export default {
       let address = data['address']
       txs.forEach(tx => {
         tx.date = new Date(tx.time * 1000)
-        tx.value = tx.value
+        tx.inputs.sort((a, b) => {
+          return a.value - b.value
+        })
+        tx.input_value = d3.sum(tx.inputs, v => v.value)
+        tx.inputs.forEach(input => {
+          input.all_value = tx.input_value
+          input.before_value = s
+        })
+        let s = 0
+        for (let i = 0; i < tx.inputs.length; i++) {
+          tx.inputs[i].before_value = s
+          s = s + tx.inputs[i].value
+        }
+        tx.outputs.sort((a, b) => {
+          return a.value - b.value
+        })
+        tx.output_value = d3.sum(tx.outputs, v => v.value)
+        tx.outputs.forEach(output => {
+          output.all_value = tx.output_value
+          output.before_value = s
+        })
+        s = 0
+        for (let i = 0; i < tx.outputs.length; i++) {
+          tx.outputs[i].before_value = s
+          s = s + tx.outputs[i].value
+        }
+
       })
       let balances = []
       txs.sort((a, b) => {
@@ -64,7 +91,7 @@ export default {
             x = x + out['value']
           }
         })
-        balances.push({ 'value': x, date: tx.date })
+        balances.push({ 'value': x + 1, date: tx.date })
       })
       console.log(balances)
 
@@ -85,11 +112,11 @@ export default {
 
       var line = d3.line()
         .x(function(d) { return xscale(d.date); })
-        .y(function(d) { return yscale(d.value + 1); })
+        .y(function(d) { return yscale(d.value); })
 
 
       xscale.domain(d3.extent(balances, v => v.date)).nice()
-      yscale.domain(d3.extent(balances, v => v.value + 1))
+      yscale.domain(d3.extent(balances, v => v.value))
       var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹",
         formatPower = function(d) { return (d + "").split("").map(function(c) { return superscript[c]; }) }
 
@@ -104,11 +131,13 @@ export default {
         .call(d3.axisLeft(yscale).tickSize(2).ticks(10, function(d) {
           let t = (10 + formatPower(Math.round(Math.log(d) / Math.LN10))).split(',')
           let tk = ''
-          for(let i in t) {
+          for (let i in t) {
             tk = tk + t[i]
           }
           return tk
         }))
+
+
       // .append("text")
       // .attr("fill", "#000")
       // .attr("transform", "rotate(-90)")
@@ -120,11 +149,123 @@ export default {
       g.append("path")
         .datum(balances)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "grey")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("stroke-width", 1.5)
         .attr("d", line);
+
+      console.log(txs)
+      let glyphg = g.selectAll('.glyph')
+        .data(txs)
+        .enter()
+        .append('g')
+        .attr('class', 'glyph')
+        .attr('transform', function(d, i) {
+          let x = xscale(balances[i].date)
+          let y = yscale(balances[i].value)
+          return 'translate(' + x + ',' + y + ')'
+        })
+
+      let rscale = d3.scaleLog().domain([1, 100]).range([1, 15])
+      // let density = d3.scaleLog().domain([1, 1e8]).range([0.1, 1])
+      let density = d3.scaleLinear().domain([1, 1e9]).range(['#fcfbfd', '#3f007d'])
+      let R = 10 // fixed tx r
+
+      let densityColor = '#54278f'
+
+      glyphg.append('circle')
+        .attr('class', 'input')
+        .attr('r', function(d) {
+          return R + rscale(d.inputs.length)
+        })
+        .style('fill', 'none')
+        .style('stroke', config.incolor) //gren
+        .style('stroke-width', 2)
+        .append('title')
+        .text(function(d){
+            return d.inputs.length
+        })
+      glyphg.append('circle')
+        .attr('class', 'output')
+        .attr('r', function(d) {
+          return R + rscale(d.outputs.length) 
+        })
+        .style('fill', 'none')
+        .style('stroke', config.outcolor) // yellow
+        .style('stroke-width', 2)
+        .append('title')
+        .text(function(d){
+            return d.outputs.length
+        })
+
+    glyphg.append('circle')
+      .attr('class', 'node')
+      .style('fill', function(d) {
+        return densityColor
+      })
+      .style('fill-opacity', function(d){
+          return density(d.input_value) //
+      })
+      .attr('r', R)
+      .append('title')
+      .text(function(d){
+          return d.input_value * 1e-8
+      })
+
+
+
+      // let rscale = d3.scaleLog().domain([1, 1e9]).range([0, 15])
+      // console.log(rscale(10000))
+      // var arc = d3.arc()
+      //   .innerRadius(0)
+      //   .outerRadius(function(d) {
+      //     return rscale(d.all_value)
+      //   })
+      //   .startAngle(function(d) {
+      //     return -1 * d.before_value / d.all_value * Math.PI
+      //   })
+      //   .endAngle(function(d) {
+      //     return -1 * (d.before_value + d.value) / d.all_value * Math.PI
+      //   })
+
+      // glyphg.selectAll('.leftCircle')
+      //   .data(function(d) {
+      //     return d.inputs
+      //   })
+      //   .enter()
+      //   .append('path')
+      //   .attr('class', 'leftCircle')
+      //   .attr('d', arc)
+      //   .attr('transform', 'translate(-1,0)')
+      //   .style('fill', config.incolor)
+      //   .style('stroke', 'grey')
+
+
+
+      // var arc2 = d3.arc()
+      //   .innerRadius(0)
+      //   .outerRadius(function(d) {
+      //     return rscale(d.all_value)
+      //   })
+      //   .startAngle(function(d) {
+      //     return d.before_value / d.all_value * Math.PI
+      //   })
+      //   .endAngle(function(d) {
+      //     return (d.before_value  + d.value) / d.all_value * Math.PI
+      //   })
+
+      // glyphg.selectAll('.rightCircle')
+      //   .data(function(d) {
+      //     return d.outputs
+      //   })
+      //   .enter()
+      //   .append('path')
+      //   .attr('class', 'rightCircle')
+      //   .attr('d', arc2)
+      //   .attr('transform', 'translate(1,0)')
+      //   .style('fill', config.outcolor)
+      //   .style('stroke', 'grey')
 
     }
   },
@@ -139,6 +280,7 @@ export default {
   height: 100%;
   overflow: scroll;
 }
+
 .axis text {
   font: 13px "helvetica neue";
 }
