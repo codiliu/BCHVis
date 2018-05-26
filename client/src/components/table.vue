@@ -1,0 +1,307 @@
+<template>
+  <div id='tableContainer' ref="tableContainer">
+    <div id="title">
+    </div>
+    <div id="tableDiv">
+      <table id="example" class="display" style="text-align:center;" border="0" cellpadding="0" cellspacing="0">
+      </table>
+    </div>
+    
+    <!-- <div id="workloadDiv">
+    </div>
+    <div id="blockDiv">
+    </div> -->
+   <!--  <data-table :data-table="tableData"></data-table> -->
+  </div>
+</template>
+<script>
+// import Map from '../charts/MapView'
+
+// import DataTable from 'vue-datatable';
+import '../../node_modules/bootstrap/dist/css/bootstrap.css'
+import '../../node_modules/bootstrap-vue/dist/bootstrap-vue.css'
+//import $ from 'jquery'
+window.$ = window.jQuery = require('jquery');
+
+import d3Tip from 'd3-tip'
+import d3 from 'd3v4'
+import { mapActions, mapGetters } from 'vuex'
+import $ from 'jquery'
+//import dataTablesCSS from '../../plugins/datatable/css/jquery.dataTables.min.css'
+//import aa from "../../plugins/datatable/js/jquery.dataTables.min.js"
+import DataTable from 'datatables'
+export default {
+  components: { },
+  data() {
+    return {
+      // list: []
+    }
+  },
+  mounted() {
+    console.log('enter table')
+    
+    
+    
+  },
+  computed: {
+      ...mapGetters({
+        addrData: 'getAddrData',
+        newAddress: 'getNewAddress'
+      })
+  },
+   watch: {
+    addrData: function(data) {
+      var self = this
+      console.log('this.addrData', this.addrData)
+      console.log('this.newAddress', this.newAddress)
+
+      console.log(data)
+      data = data[Object.keys(data)[0]]
+      var txData = data['txs']
+      var len = txData.length
+
+      var final_balance = self.satoshi2BTC(data['final_balance'])
+      var total_received = self.satoshi2BTC(data['total_received'])
+      var total_sent = self.satoshi2BTC(data['total_sent'])
+      var n_txs = len
+
+      
+      var dataSet = []
+      txData.forEach(function(d, i){
+        var record=[]
+        record.push(len-i)
+        record.push(self.timeConverter(d['time']))
+        record.push(d['in_value'])
+        record.push(d['out_value'])
+        record.push(d['fee'])
+        record.push(d['hash'].substring(0,5)+"...")
+        dataSet.push(record)
+      })
+
+      var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
+      $(document).ready(function() {
+          $('#example').DataTable( {
+              data: dataSet,
+              "scrollY": scrollY+'px',
+              "paging": false,
+              columns: [
+                  { title: "ID" },
+                  { title: "Time" },
+                  { title: "Received" },
+                  { title: "Sent" },
+                  { title: "Fee" },
+                  { title: "Hash" },
+              ],
+              "order": [[ 1, 'asc' ]]
+          } );
+
+
+          var text = "<div style='float:left;text-align:left'><strong>Balance: "+final_balance+"<br>Received: "+total_received+"<br>Sent: "+total_sent+"<br>Txs: "+n_txs+"</strong></div>"
+          // +"<div style='float:right;'><label style='overflow:right'>Search:<input type='search' class='' placeholder='' aria-controls='example'></label></div>"
+
+          // console.log(text)
+          $("#example_filter label").before(text)
+
+          $("#example > tbody > tr").css("background", "white")
+          $("#example > tbody > tr").attr("class","unselected")
+          $("#example > tbody > tr").click(function(d){
+            if($(this).attr("class")=="unselected"){
+              $(this).css("background", "#addd8e")
+              $(this).attr("class", "selected")
+            }
+            else{
+              $(this).css("background", "white")
+              $(this).attr("class", "unselected")
+            }
+          })
+      } );
+
+      
+      // $(document).ready(function() {
+      //     var t = $('#example').DataTable( {
+
+      //         data: dataSet,
+      //         columns: [
+      //             { title: "ID" },
+      //             { title: "Tx Time" },
+      //             { title: "Tx Number" },
+      //             { title: "Hash" },
+      //         ],
+      //         "columnDefs": [ {
+      //           "searchable": false,
+      //           "orderable": false,
+      //           "targets": 0
+      //         } ],
+      //         "order": [[ 1, 'asc' ]]
+      //     } );
+       
+      //     t.on( 'order.dt search.dt', function () {
+      //         t.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+      //             cell.innerHTML = i+1;
+      //         } );
+      //     } ).draw();
+      // } );
+
+      
+      
+    },
+  },
+  methods: {
+    ...mapActions(['setSelectRound']),
+    satoshi2BTC(str){
+      str=String(str)
+      var a = parseInt(str/100000000)
+      var b = str%100000000
+      return a+'. '+b+' btc'
+    },
+    addZero(str){
+      str=String(str)
+      if(str.length==1) str='0'+str;
+      return str
+    },
+    timeConverter(UNIX_timestamp){
+      var a = new Date(parseInt(UNIX_timestamp) * 1000)
+      var year = this.addZero(a.getFullYear())
+      var month = this.addZero(a.getMonth())
+      var date = this.addZero(a.getDate())
+      var hour = this.addZero(a.getHours())
+      var min = this.addZero(a.getMinutes())
+      var sec = this.addZero(a.getSeconds())
+      var time = year + '/' + month + '/' + date + ' ' + hour + ':' + min + ':' + sec 
+      return time;
+    },
+    extractProcess(data, keyValue){
+      var processData={}
+      data.forEach(function(d){
+        if(!processData[d['round']])  processData[d['round']]=[]
+        var re = {}
+        re['name'] = d['name']
+        re[keyValue] = +d[keyValue]
+        processData[d['round']].push(re)
+      })
+      var filterData=[]
+      for(var index in processData){
+        processData[index].sort(function(a,b){
+          return a.name-b.name
+        })
+        filterData.push(processData[index])
+      }
+      return filterData
+    },
+  }
+}
+
+</script>
+<style lang="less">
+
+#tableContainer {
+  /*background: red;*/
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  border: 1px solid grey;
+  #example_filter > label > input{
+    width: 100px
+  }
+  #title {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 5em;
+    border: 1px solid grey;
+  }
+  #tableDiv {
+    /*background: red;*/
+    position: absolute;
+    top: 5em;
+    left: 0%;
+    width: 100%;
+    height: calc(~"100% - 5em");
+    table{
+      border-collapse:collapse;
+      text-align:center;
+      thead th{
+        border-bottom:2px solid black;
+      }
+      td{
+        border-bottom:1px solid black;
+        
+      }
+      tr:hover{
+        cursor: pointer;
+      }
+ 
+    }
+  }
+
+}
+
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: orange;
+}
+
+.solidArc:hover {
+  stroke: white;
+}
+
+.solidArc {
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.aster-score { 
+  line-height: 1;
+  font-weight: bold;
+  font-size: 500%;
+}
+
+
+
+
+</style>
