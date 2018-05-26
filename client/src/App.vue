@@ -120,7 +120,6 @@ export default {
     }
   }
   #timeline {
-    background: red;
     position: absolute;
     top: 10%;
     left: 5%;
