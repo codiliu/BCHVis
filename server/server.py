@@ -53,8 +53,6 @@ def extractData(data):
         record['time']=index['time']
         record['tx_index']=index['tx_index']
         record['hash']=index['hash']
-        
-        
         for te in index['inputs']:
             temp={}
             temp['spent']=te['prev_out']['spent']
@@ -88,17 +86,16 @@ def get_page(url):
 def filterData(address):
     url = "https://blockchain.info/rawaddr/" + address
     dataArr = get_page(url)
-    for i in range(1, 10000):
-        print(i)
-        url = "https://blockchain.info/rawaddr/" + address +'?offset='
-        url += str(i*50)
-        data = get_page(url)
-        try:
-            if len(data['txs']) == 0:
-                break
-            dataArr['txs'].extend(data['txs'])
-        except: 
-            break
+    # for i in range(1, 10000):
+    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
+    #     url += str(i*50)
+    #     data = get_page(url)
+    #     try:
+    #         if len(data['txs']) == 0:
+    #             break
+    #         dataArr['txs'].extend(data['txs'])
+    #     except: 
+    #         break
     return dataArr
 
 
@@ -138,8 +135,36 @@ class addressHandler(tornado.web.RequestHandler):
       print("Search " + str(address))
 
       data = filterData(address)
+      addr = []
+      addrAll = []
+      for index in data['txs']:
+
+        in_value=0
+        out_value=0
+        for inputs in index['inputs']:
+          in_value+=inputs['value']
+          addrAll.append(inputs['addr'])
+          if inputs['addr'] not in addr:
+            addr.append(inputs['addr'])
+        for outputs in index['outputs']:
+          out_value+=outputs['value']
+          addrAll.append(outputs['addr'])
+          if outputs['addr'] not in addr:
+            addr.append(outputs['addr'])
+
+      
+        index['in_value']=in_value
+        index['out_value']=out_value
+        index['fee']=in_value - out_value
+        # if index['fee']<0:
+        #   print(index['fee'])
+        #   print(index)
+        # print("***********")
       #print(data)
 
+      # print(len(addrAll))
+      # print(len(addr))
+      
       self.write(data)
 
     def get(self):
@@ -215,9 +240,7 @@ if __name__ == "__main__":
                   ],
         debug=True,
     )
-    data = filterData('1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z')
-    with open('data.json', 'w') as f:
-        json.dump(data, f)
+
 
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)

@@ -9,7 +9,8 @@
     </div>
     <div id="graph">
     </div>
-    <div id="table">
+     <div id="table">
+      <tableBox> </tableBox>
     </div>
   </div>
 </template>
@@ -17,13 +18,14 @@
 // import myGraph from './components/graph.vue'
 // import myRank from './components/rank.vue'
 import searchBox from './components/top.vue'
+import tableBox from './components/table.vue'
 import timeline from './components/timeline.vue'
 import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'app',
-  components: { searchBox, timeline},
+  components: { searchBox, timeline, tableBox},
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
@@ -60,41 +62,41 @@ export default {
       })
     }
   },
-  // async created() {
-  //   var self = this
+  async created() {
+    var self = this
 
-  //   var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
+    var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
 
-  //   sendAddress(address)
-  //   function sendAddress(address) {
-  //     var constraint = {}
-  //     var formData = new URLSearchParams();
-  //     constraint['address'] = address;
-  //     constraint = JSON.stringify(constraint)
-  //     formData.append('constraint', constraint)
-  //     sendUrl('searchAddress', formData, 'address', address)
-  //   }
+    sendAddress(address)
+    function sendAddress(address) {
+      var constraint = {}
+      var formData = new URLSearchParams();
+      constraint['address'] = address;
+      constraint = JSON.stringify(constraint)
+      formData.append('constraint', constraint)
+      sendUrl('searchAddress', formData, 'address', address)
+    }
 
-  //   // function sendTest () {
-  //   //   var constraint = {}
-  //   //   var formData = new URLSearchParams();
-  //   //   constraint = JSON.stringify(constraint)      
-  //   //   formData.append('constraint', constraint)
-  //   //   sendUrl ('ws', formData, 'test')
-  //   // }
+    // function sendTest () {
+    //   var constraint = {}
+    //   var formData = new URLSearchParams();
+    //   constraint = JSON.stringify(constraint)      
+    //   formData.append('constraint', constraint)
+    //   sendUrl ('ws', formData, 'test')
+    // }
 
 
-  //   function sendUrl(Url, formData, v_id, info) {
-  //     Url = 'http://127.0.0.1:22068/' + Url
-  //     console.log('Request: ', Url)
-  //     self.$api.post(Url, formData, data => {
-  //       self.setAddData([info, data])
-  //       console.log('get ' + v_id + 'success: ', data)
+    function sendUrl(Url, formData, v_id, info) {
+      Url = 'http://127.0.0.1:22068/' + Url
+      console.log('Request: ', Url)
+      self.$api.post(Url, formData, data => {
+        self.setAddData([info, data])
+        console.log('get ' + v_id + 'success: ', data)
 
-  //     })
-  //   }
+      })
+    }
    
-  // }
+  }
 }
 
 </script>
@@ -117,17 +119,12 @@ export default {
       font-weight: bolder;
     }
   }
-  #top {
-    position: absolute;
-    top: 1.5em;
-    left: 25%;
-  }
-
   #timeline {
+    background: red;
     position: absolute;
     top: 10%;
     left: 5%;
-    width: 70%;
+    width: 65%;
     height: 20%;
     border: 1px solid grey;
   }
@@ -136,16 +133,16 @@ export default {
     position: absolute;
     top: 30%;
     left: 5%;
-    width: 70%;
+    width: 65%;
     height: 70%;
     border: 1px solid grey;
   }
   #table {
-    background: green;
+    /*background: green;*/
     position: absolute;
     top: 10%;
-    left: 75%;
-    width: 20%;
+    left: 70%;
+    width: 30%;
     height: 90%;
   }
 }
