@@ -3,9 +3,9 @@
     <div id="title">
       <button id="title_left" class="selected">
       </button>
-      <button id="title_middle">
+      <button id="title_middle" class="unselected">
       </button>
-      <button id="title_right">
+      <button id="title_right" class="unselected">
       </button>
     </div>
     <div id="tableDiv">
@@ -70,7 +70,7 @@ export default {
 
       self.drawTxs(txData)
       $(document).ready(function() {
-        $("#title button").attr('class', 'unselected')
+        //$("#title button").attr('class', 'unselected')
         $("#title button").click(function(){
            if($(this).attr('class')=='unselected'){
             $("#title button").attr('class', 'unselected')

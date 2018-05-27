@@ -9,8 +9,11 @@
     </div>
     <div id="graph">
     </div>
-     <div id="table">
+    <div id="table">
       <tableBox> </tableBox>
+    </div>
+    <div id="center">
+      <nodelinkBox></nodelinkBox>
     </div>
   </div>
 </template>
@@ -20,12 +23,13 @@
 import searchBox from './components/top.vue'
 import tableBox from './components/table.vue'
 import timeline from './components/timeline.vue'
+import nodelinkBox from './components/nodelink.vue'
 import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'app',
-  components: { searchBox, timeline, tableBox},
+  components: { searchBox, timeline, tableBox, nodelinkBox},
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
@@ -141,7 +145,14 @@ export default {
     top: 10%;
     left: 70%;
     width: 30%;
-    height: 90%;
+    height: 50%;
+  }
+  #center{
+    position: absolute;
+    top: 60%;
+    left: 70%;
+    width: 30%;
+    height: 40%;
   }
 }
 
