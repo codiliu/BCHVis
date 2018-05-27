@@ -1,6 +1,12 @@
 <template>
   <div id='tableContainer' ref="tableContainer">
     <div id="title">
+      <button id="title_left" class="selected">
+      </button>
+      <button id="title_middle">
+      </button>
+      <button id="title_right">
+      </button>
     </div>
     <div id="tableDiv">
       <table id="example" class="display" style="text-align:center;" border="0" cellpadding="0" cellspacing="0">
@@ -40,7 +46,7 @@ export default {
   mounted() {
     console.log('enter table')
     
-    
+
     
   },
   computed: {
@@ -50,72 +56,38 @@ export default {
       })
   },
    watch: {
-    addrData: function(data) {
+    addrData: function(allData) {
       var self = this
       console.log('this.addrData', this.addrData)
       console.log('this.newAddress', this.newAddress)
 
-      console.log(data)
-      data = data[Object.keys(data)[0]]
-      var txData = data['txs']
-      var len = txData.length
-
-      var final_balance = self.satoshi2BTC(data['final_balance'])
-      var total_received = self.satoshi2BTC(data['total_received'])
-      var total_sent = self.satoshi2BTC(data['total_sent'])
-      var n_txs = len
+      $('#title_left').text('#TXS: '+ allData[Object.keys(allData)[0]]['txData']['n_tx'])
+      $('#title_middle').text('#ADDRS: '+ allData[Object.keys(allData)[0]]['addrData'].length)
 
       
-      var dataSet = []
-      txData.forEach(function(d, i){
-        var record=[]
-        record.push(len-i)
-        record.push(self.timeConverter(d['time']))
-        record.push(d['in_value'])
-        record.push(d['out_value'])
-        record.push(d['fee'])
-        record.push(d['hash'].substring(0,5)+"...")
-        dataSet.push(record)
-      })
+      var txData = allData[Object.keys(allData)[0]]['txData']
+      var addrData = allData[Object.keys(allData)[0]]['addrData']
 
-      var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
+      self.drawTxs(txData)
       $(document).ready(function() {
-          $('#example').DataTable( {
-              data: dataSet,
-              "scrollY": scrollY+'px',
-              "paging": false,
-              columns: [
-                  { title: "ID" },
-                  { title: "Time" },
-                  { title: "Received" },
-                  { title: "Sent" },
-                  { title: "Fee" },
-                  { title: "Hash" },
-              ],
-              "order": [[ 1, 'asc' ]]
-          } );
+        $("#title button").attr('class', 'unselected')
+        $("#title button").click(function(){
+           if($(this).attr('class')=='unselected'){
+            $("#title button").attr('class', 'unselected')
+             $(this).attr('class', 'selected')
+             if($(this).attr('id')=='title_left'){
+              self.drawTxs(txData)
+             }
+             else if($(this).attr('id')=='title_middle'){
+              self.drawAddr(addrData)
+             }
+           }
+           else{
+             $(this).attr('class', 'unselected')
+           }
+        })
 
-
-          var text = "<div style='float:left;text-align:left'><strong>Balance: "+final_balance+"<br>Received: "+total_received+"<br>Sent: "+total_sent+"<br>Txs: "+n_txs+"</strong></div>"
-          // +"<div style='float:right;'><label style='overflow:right'>Search:<input type='search' class='' placeholder='' aria-controls='example'></label></div>"
-
-          // console.log(text)
-          $("#example_filter label").before(text)
-
-          $("#example > tbody > tr").css("background", "white")
-          $("#example > tbody > tr").attr("class","unselected")
-          $("#example > tbody > tr").click(function(d){
-            if($(this).attr("class")=="unselected"){
-              $(this).css("background", "#addd8e")
-              $(this).attr("class", "selected")
-            }
-            else{
-              $(this).css("background", "white")
-              $(this).attr("class", "unselected")
-            }
-          })
-      } );
-
+      })
       
       // $(document).ready(function() {
       //     var t = $('#example').DataTable( {
@@ -153,6 +125,130 @@ export default {
       var a = parseInt(str/100000000)
       var b = str%100000000
       return a+'. '+b+' btc'
+    },
+    drawAddr(data){
+      var self = this
+      var txData = data
+      var len = txData.length
+
+      $('#tableDiv').empty()
+      $('#tableDiv').html("<table id='example' class='display' style='text-align:center;' border='0' cellpadding='0' cellspacing='0'></table>")
+      // var final_balance = self.satoshi2BTC(data['final_balance'])
+      // var total_received = self.satoshi2BTC(data['total_received'])
+      // var total_sent = self.satoshi2BTC(data['total_sent'])
+      // var n_txs = len
+
+      
+      var dataSet = []
+      txData.forEach(function(d, i){
+        var record=[]
+        record.push(len-i)
+        record.push(d['addr'].substring(0,5)+"...")
+        record.push(d['received'])
+        record.push(d['sent'])
+        record.push(d['balance'])
+        record.push(d['input_n'])
+        record.push(d['output_n'])
+        //record.push(d['tx_n'])
+        dataSet.push(record)
+      })
+
+      var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
+
+      $(document).ready(function() {
+          $('#example').DataTable( {
+              data: dataSet,
+              "scrollY": scrollY+'px',
+              "paging": false,
+              columns: [
+                  { title: "ID" },
+                  { title: "Addr" },
+                  { title: "Received" },
+                  { title: "Sent" },
+                  { title: "Balance" },
+                  { title: "Input_n" },
+                  { title: "Output_n" },
+                 // { title: "Tx_n" },
+              ],
+              "order": [[ 1, 'asc' ]]
+          } );
+
+          // var text = "<div style='float:left;text-align:left'><strong>Balance: "+final_balance+"<br>Received: "+total_received+"<br>Sent: "+total_sent+"<br>Txs: "+n_txs+"</strong></div>"
+          // $("#example_filter label").before(text)
+
+          $("#example > tbody > tr").css("background", "white")
+          $("#example > tbody > tr").attr("class","unselected")
+          $("#example > tbody > tr").click(function(d){
+            if($(this).attr("class")=="unselected"){
+              $(this).css("background", "#addd8e")
+              $(this).attr("class", "selected")
+            }
+            else{
+              $(this).css("background", "white")
+              $(this).attr("class", "unselected")
+            }
+          })
+      } );
+    },
+    drawTxs(data){
+      var self = this
+      var txData = data['txs']
+      var len = txData.length
+
+      $('#tableDiv').empty()
+      $('#tableDiv').html("<table id='example' class='display' style='text-align:center;' border='0' cellpadding='0' cellspacing='0'></table>")
+
+      var final_balance = self.satoshi2BTC(data['final_balance'])
+      var total_received = self.satoshi2BTC(data['total_received'])
+      var total_sent = self.satoshi2BTC(data['total_sent'])
+      var n_txs = len
+
+      
+      var dataSet = []
+      txData.forEach(function(d, i){
+        var record=[]
+        record.push(len-i)
+        record.push(self.timeConverter(d['time']))
+        record.push(d['in_value'])
+        record.push(d['out_value'])
+        record.push(d['fee'])
+        record.push(d['hash'].substring(0,5)+"...")
+        dataSet.push(record)
+      })
+
+      var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
+      $(document).ready(function() {
+          $('#example').DataTable( {
+              data: dataSet,
+              "scrollY": scrollY+'px',
+              "paging": false,
+              columns: [
+                  { title: "ID" },
+                  { title: "Time" },
+                  { title: "Received" },
+                  { title: "Sent" },
+                  { title: "Fee" },
+                  { title: "Hash" },
+              ],
+              "order": [[ 1, 'asc' ]]
+          } );
+
+          var text = "<div style='float:left;text-align:left'><strong>Balance: "+final_balance+"<br>Received: "+total_received+"<br>Sent: "+total_sent+"<br>Txs: "+n_txs+"</strong></div>"
+          $("#example_filter label").before(text)
+
+          $("#example > tbody > tr").css("background", "white")
+          $("#example > tbody > tr").attr("class","unselected")
+          $("#example > tbody > tr").click(function(d){
+            if($(this).attr("class")=="unselected"){
+              $(this).css("background", "#addd8e")
+              $(this).attr("class", "selected")
+            }
+            else{
+              $(this).css("background", "white")
+              $(this).attr("class", "unselected")
+            }
+          })
+      } );
     },
     addZero(str){
       str=String(str)
@@ -210,16 +306,37 @@ export default {
     top: 0%;
     left: 0%;
     width: 100%;
-    height: 5em;
+    height: 3em;
     border: 1px solid grey;
+    #title_left{
+      float: left;
+      width: 33.33%;
+      height: 100%;
+    }
+    #title_middle{
+      float: left;
+      width: 33.33%;
+      height: 100%;
+    }
+    #title_right{
+      float: right;
+      width: 33.33%;
+      height: 100%;
+    }
+    button:hover{
+      cursor: pointer;
+    }
+    .selected{
+      background: grey;
+    }
   }
   #tableDiv {
     /*background: red;*/
     position: absolute;
-    top: 5em;
+    top: 3em;
     left: 0%;
     width: 100%;
-    height: calc(~"100% - 5em");
+    height: calc(~"100% - 3em");
     table{
       border-collapse:collapse;
       text-align:center;

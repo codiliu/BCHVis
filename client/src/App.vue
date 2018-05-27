@@ -128,7 +128,6 @@ export default {
     border: 1px solid grey;
   }
   #graph {
-    background: blue;
     position: absolute;
     top: 30%;
     left: 5%;

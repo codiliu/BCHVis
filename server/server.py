@@ -86,16 +86,16 @@ def get_page(url):
 def filterData(address):
     url = "https://blockchain.info/rawaddr/" + address
     dataArr = get_page(url)
-    # for i in range(1, 10000):
-    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
-    #     url += str(i*50)
-    #     data = get_page(url)
-    #     try:
-    #         if len(data['txs']) == 0:
-    #             break
-    #         dataArr['txs'].extend(data['txs'])
-    #     except: 
-    #         break
+    for i in range(1, 10000):
+        url = "https://blockchain.info/rawaddr/" + address +'?offset='
+        url += str(i*50)
+        data = get_page(url)
+        try:
+            if len(data['txs']) == 0:
+                break
+            dataArr['txs'].extend(data['txs'])
+        except: 
+            break
     return dataArr
 
 
@@ -137,25 +137,73 @@ class addressHandler(tornado.web.RequestHandler):
       data = filterData(address)
       addr = []
       addrAll = []
+      addrData={}
       for index in data['txs']:
-
-        in_value=0
-        out_value=0
+          in_value=0
+          out_value=0
+          index['core_inputs_n']=0
+          index['core_outputs_n']=0
+          inputs_filter={}
+          outputs_filter={}
+          
+          # inputs_flag = True
+          # outputs_flag = True
+          for inputs in index['inputs']:
+            in_value+=inputs['value']
+            addrAll.append(inputs['addr'])
+            if inputs['addr'] not in addr:
+              addr.append(inputs['addr'])
+            if inputs['addr'] not in inputs_filter.keys():
+              inputs_filter[inputs['addr']]=inputs
+            else:
+              inputs_filter[inputs['addr']]['value']+=inputs['value']
+            if inputs['addr']=="1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z":
+              index['core_inputs_n']+=1
+            
+             
+          for outputs in index['outputs']:
+            out_value+=outputs['value']
+            addrAll.append(outputs['addr'])
+            if outputs['addr'] not in addr:
+              addr.append(outputs['addr'])
+            if outputs['addr'] not in outputs_filter.keys():
+              outputs_filter[outputs['addr']]=outputs
+            else:
+              outputs_filter[outputs['addr']]['value']+=outputs['value']
+              
+            if outputs['addr']=="1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z":
+              index['core_outputs_n']+=1
+          
+          index['inputs'] = list(inputs_filter.values())
+          #index['outputs'] = list(outputs_filter.values())
+          index['in_value']=in_value
+          index['out_value']=out_value
+          index['fee']=in_value - out_value
+          
+      i = 0
+      for index in data['txs']:
         for inputs in index['inputs']:
-          in_value+=inputs['value']
-          addrAll.append(inputs['addr'])
-          if inputs['addr'] not in addr:
-            addr.append(inputs['addr'])
+          if inputs['addr'] not in addrData.keys():
+              addrData[inputs['addr']]={'balance':0, "received":0,"sent":0,"tx_n":0,"input_n":0,"output_n":0,"tx_index":[]}
+          addrData[inputs['addr']]['sent']+=inputs['value']
+          addrData[inputs['addr']]['input_n']+=1
+          addrData[inputs['addr']]['tx_n']+=1
+          addrData[inputs['addr']]['tx_index'].append(i)
+                  
         for outputs in index['outputs']:
-          out_value+=outputs['value']
-          addrAll.append(outputs['addr'])
-          if outputs['addr'] not in addr:
-            addr.append(outputs['addr'])
+          if outputs['addr'] not in addrData.keys():
+              addrData[outputs['addr']]={'balance':0, "received":0,"sent":0,"tx_n":0,"input_n":0,"output_n":0,"tx_index":[]}
+          addrData[outputs['addr']]['received']+=outputs['value']
+          addrData[outputs['addr']]['output_n']+=1
+          addrData[outputs['addr']]['tx_n']+=1
+          addrData[outputs['addr']]['tx_index'].append(i)
+        i+=1
 
-      
-        index['in_value']=in_value
-        index['out_value']=out_value
-        index['fee']=in_value - out_value
+      txData=[]
+      for index in addrData:
+        addrData[index]['balance'] = addrData[index]['received']-addrData[index]['sent']
+        addrData[index]['addr'] = index
+        txData.append(addrData[index])
         # if index['fee']<0:
         #   print(index['fee'])
         #   print(index)
@@ -165,7 +213,8 @@ class addressHandler(tornado.web.RequestHandler):
       # print(len(addrAll))
       # print(len(addr))
       
-      self.write(data)
+      print(data['n_tx'])
+      self.write({'txData': data, 'addrData': txData})
 
     def get(self):
       self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
