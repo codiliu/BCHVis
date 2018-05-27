@@ -10,7 +10,8 @@ import $ from 'jquery'
 export default {
   data() {
     return {
-      address: null
+      address: null,
+      txindex: null
     }
   },
   mounted() {
@@ -98,7 +99,7 @@ export default {
       var W = $('#view').width(),
         H = $('#view').height()
       var svg = d3.select("#view").append('svg').attr('width', W * 5).attr('height', H),
-        margin = { top: 20, right: 20, bottom: 30, left: 50 },
+        margin = { top: 20, right: 20, bottom: 25, left: 50 },
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -167,10 +168,10 @@ export default {
           return 'translate(' + x + ',' + y + ')'
         })
 
-      let rscale = d3.scaleLog().domain([1, 100]).range([1, 15])
+      let rscale = d3.scaleLog().domain([1, 100]).range([1, 12])
       // let density = d3.scaleLog().domain([1, 1e8]).range([0.1, 1])
       let density = d3.scaleLinear().domain([1, 1e9]).range(['#fcfbfd', '#3f007d'])
-      let R = 10 // fixed tx r
+      let R = 8 // fixed tx r
 
       let densityColor = '#54278f'
 
@@ -208,6 +209,9 @@ export default {
           return density(d.input_value) //
       })
       .attr('r', R)
+      .on('click', function(d){
+        console.log(d.tx_index)
+      })
       .append('title')
       .text(function(d){
           return d.input_value * 1e-8
@@ -277,7 +281,7 @@ export default {
 #view {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 99%;
   overflow: scroll;
 }
 
