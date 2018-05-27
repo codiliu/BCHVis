@@ -8,6 +8,7 @@
       <timeline> </timeline>
     </div>
     <div id="graph">
+      <river> </river>
     </div>
     <div id="table">
       <tableBox> </tableBox>
@@ -24,12 +25,13 @@ import searchBox from './components/top.vue'
 import tableBox from './components/table.vue'
 import timeline from './components/timeline.vue'
 import nodelinkBox from './components/nodelink.vue'
+import river from './components/river.vue'
 import $ from 'jquery'
 import { mapActions, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'app',
-  components: { searchBox, timeline, tableBox, nodelinkBox},
+  components: { searchBox, timeline, tableBox, nodelinkBox, river},
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
@@ -123,6 +125,10 @@ export default {
       font-weight: bolder;
     }
   }
+  #top {
+    position: absolute;
+    left: 30%;
+  }
   #timeline {
     position: absolute;
     top: 10%;
@@ -130,14 +136,16 @@ export default {
     width: 65%;
     height: 20%;
     border: 1px solid grey;
+    border-radius: 5px;
   }
   #graph {
     position: absolute;
-    top: 30%;
+    top: 31%;
     left: 5%;
     width: 65%;
-    height: 70%;
+    height: 68%;
     border: 1px solid grey;
+    border-radius: 5px;
   }
   #table {
     /*background: green;*/
