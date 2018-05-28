@@ -11,14 +11,14 @@ export default {
   data() {
     return {
       address: null,
-      txindex: null
+      tx_index: null
     }
   },
   mounted() {
     let path = '../../static/resource/bitcoin.json'
     let self = this
     d3.json(path, function(err, data) {
-      self.process(data)
+      self.process(data['txData'])
     })
 
   },
@@ -38,11 +38,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setSelectedTx']),
     submit: function(data) {
       console.log(data)
     },
     process: function(data) {
-
+      let self = this
       let txs = data['txs']
       let address = data['address']
       txs.forEach(tx => {
@@ -98,7 +99,7 @@ export default {
 
       var W = $('#view').width(),
         H = $('#view').height()
-      var svg = d3.select("#view").append('svg').attr('width', W * 5).attr('height', H),
+      var svg = d3.select("#view").append('svg').attr('width', W).attr('height', H),
         margin = { top: 20, right: 20, bottom: 25, left: 50 },
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
@@ -124,7 +125,7 @@ export default {
       g.append("g")
         .attr("class", "axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(xscale).tickSize(2).tickFormat(d3.timeFormat("%Y-%m-%d")))
+        .call(d3.axisBottom(xscale).tickSize(2).tickFormat(d3.timeFormat("%Y-%m-%d")).ticks(7))
 
 
       g.append("g")
@@ -138,7 +139,25 @@ export default {
           return tk
         }))
 
+      var brush = d3.brushX()
+        .extent([
+          [0, 0],
+          [width, height]
+        ])
+        .on("end", brushmoved)
 
+      var gBrush = g.append("g")
+        .attr("class", "brush")
+        .call(brush)
+
+      function brushmoved() {
+        var s = d3.event.selection;
+        if (s == null) {
+        } else {
+          var sx = s.map(xscale.invert);
+          console.log(sx)
+        }
+      }
       // .append("text")
       // .attr("fill", "#000")
       // .attr("transform", "rotate(-90)")
@@ -150,7 +169,7 @@ export default {
       g.append("path")
         .datum(balances)
         .attr("fill", "none")
-        .attr("stroke", "grey")
+        .attr("stroke", "steelblue")
         .attr("stroke-linejoin", "round")
         .attr("stroke-linecap", "round")
         .attr("stroke-width", 1.5)
@@ -175,47 +194,49 @@ export default {
 
       let densityColor = '#54278f'
 
-      glyphg.append('circle')
-        .attr('class', 'input')
-        .attr('r', function(d) {
-          return R + rscale(d.inputs.length)
-        })
-        .style('fill', 'none')
-        .style('stroke', config.incolor) //gren
-        .style('stroke-width', 2)
-        .append('title')
-        .text(function(d){
-            return d.inputs.length
-        })
-      glyphg.append('circle')
-        .attr('class', 'output')
-        .attr('r', function(d) {
-          return R + rscale(d.outputs.length) 
-        })
-        .style('fill', 'none')
-        .style('stroke', config.outcolor) // yellow
-        .style('stroke-width', 2)
-        .append('title')
-        .text(function(d){
-            return d.outputs.length
-        })
+      //   glyphg.append('circle')
+      //     .attr('class', 'input')
+      //     .attr('r', function(d) {
+      //       return R + rscale(d.inputs.length)
+      //     })
+      //     .style('fill', 'none')
+      //     .style('stroke', config.incolor) //gren
+      //     .style('stroke-width', 2)
+      //     .append('title')
+      //     .text(function(d){
+      //         return d.inputs.length
+      //     })
 
-    glyphg.append('circle')
-      .attr('class', 'node')
-      .style('fill', function(d) {
-        return densityColor
-      })
-      .style('fill-opacity', function(d){
-          return density(d.input_value) //
-      })
-      .attr('r', R)
-      .on('click', function(d){
-        console.log(d.tx_index)
-      })
-      .append('title')
-      .text(function(d){
-          return d.input_value * 1e-8
-      })
+
+      //   glyphg.append('circle')
+      //     .attr('class', 'output')
+      //     .attr('r', function(d) {
+      //       return R + rscale(d.outputs.length) 
+      //     })
+      //     .style('fill', 'none')
+      //     .style('stroke', config.outcolor) // yellow
+      //     .style('stroke-width', 2)
+      //     .append('title')
+      //     .text(function(d){
+      //         return d.outputs.length
+      //     })
+
+      // glyphg.append('circle')
+      //   .attr('class', 'node')
+      //   .style('fill', function(d) {
+      //     return densityColor
+      //   })
+      //   .style('fill-opacity', function(d){
+      //       return density(d.input_value) //
+      //   })
+      //   .attr('r', R)
+      //   .on('click', function(d){
+      //      self.setSelectedTx(d.tx_index)
+      //   })
+      //   .append('title')
+      //   .text(function(d){
+      //       return d.input_value * 1e-8
+      //   })
 
 
 
@@ -284,6 +305,8 @@ export default {
   height: 99%;
   overflow: scroll;
 }
+
+.highlight {}
 
 .axis text {
   font: 13px "helvetica neue";

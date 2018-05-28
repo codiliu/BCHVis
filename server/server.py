@@ -86,16 +86,16 @@ def get_page(url):
 def filterData(address):
     url = "https://blockchain.info/rawaddr/" + address
     dataArr = get_page(url)
-    # for i in range(1, 10000):
-    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
-    #     url += str(i*50)
-    #     data = get_page(url)
-    #     try:
-    #         if len(data['txs']) == 0:
-    #             break
-    #         dataArr['txs'].extend(data['txs'])
-    #     except: 
-    #         break
+    for i in range(1, 10000):
+        url = "https://blockchain.info/rawaddr/" + address +'?offset='
+        url += str(i*50)
+        data = get_page(url)
+        try:
+            if len(data['txs']) == 0:
+                break
+            dataArr['txs'].extend(data['txs'])
+        except: 
+            break
     return dataArr
 
 
@@ -215,6 +215,8 @@ class addressHandler(tornado.web.RequestHandler):
       
       print(data['n_tx'])
       self.write({'txData': data, 'addrData': txData})
+      # with open('data.json', 'w') as f:
+      #   json.dump({'txData': data, 'addrData': txData}, f)
 
     def get(self):
       self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
@@ -289,7 +291,6 @@ if __name__ == "__main__":
                   ],
         debug=True,
     )
-
 
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)

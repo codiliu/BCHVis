@@ -17,23 +17,27 @@ export default {
     let path = '../../static/resource/bitcoin.json'
     let self = this
     d3.json(path, function(err, data) {
-      self.process(data)
+      self.process(data['txData'])
     })
 
   },
   computed: {
     ...mapGetters({
       addrData: 'getAddrData',
-      newAddress: 'getNewAddress'
+      newAddress: 'getNewAddress',
+      selectedTx: 'getSelectedTx'
     })
   },
   watch: {
     addrData: function(data) {
-      this.allTxs = data[this.address]
+      // this.allTxs = data['txData']
     },
     newAddress: function(data) {
       this.address = data
     },
+    selectedTx: function(data) {
+      console.log(data)
+    }
 
   },
   methods: {
@@ -203,8 +207,9 @@ export default {
         paths.push(path)
       }
 
+      let riverg = viewg.append('g')
 
-      viewg.selectAll('.river')
+      riverg.selectAll('.river')
         .data(paths)
         .enter()
         .append('path')

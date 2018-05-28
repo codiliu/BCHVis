@@ -73,7 +73,7 @@ export default {
 
     var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
 
-    sendAddress(address)
+    // sendAddress(address)
     function sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();

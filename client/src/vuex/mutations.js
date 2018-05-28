@@ -15,4 +15,7 @@ export default {
   [types.DEL_DATA] (state, addr) {
     delete(state.addrData[addr])
   },
+  [types.SET_SELECTED_TX] (state, tx) {
+    state.selectedTx = tx
+  },
 }

@@ -14,6 +14,9 @@ export default {
     //console.log(data)
     commit(types.DEL_DATA, data)
   },
+  setSelectedTx({ commit, state}, data) {
+    commit(types.SET_SELECTED_TX, data)
+  }
 
 }
 	
