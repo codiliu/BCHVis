@@ -36,7 +36,8 @@ export default {
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
-        newAddress: 'getNewAddress'
+        newAddress: 'getNewAddress',
+        newHash: 'getHash'
       })
   },
   watch: {
@@ -47,9 +48,24 @@ export default {
       console.log(data)
       this.sendAddress(data)
     },
+    newHash: function(hash){
+      var self = this
+      console.log('hash:', hash)
+      var data = self.sendTxId(hash)
+      
+      
+    },
   },
   methods: {
-    ...mapActions(['setAddData', 'setNewAddress']),
+    ...mapActions(['setAddData', 'setNewAddress', 'setHashData']),
+    sendTxId(txid) {
+      var constraint = {}
+      var formData = new URLSearchParams();
+      constraint['txid'] = txid;
+      constraint = JSON.stringify(constraint)
+      formData.append('constraint', constraint)
+      this.sendUrl('searchTxId', formData, 'txid', txid)
+    },
     sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
@@ -63,7 +79,14 @@ export default {
       Url = 'http://127.0.0.1:22068/' + Url
       console.log('Request: ', Url)
       self.$api.post(Url, formData, data => {
-        self.setAddData([info, data])
+        if(v_id=="address"){
+          self.setAddData([info, data])
+        }
+        else if(v_id=="txid"){
+          console.log(data)
+          self.setHashData(data['txidData'])
+        }
+        
         console.log('get ' + v_id + 'success: ', data)
 
       })
@@ -71,10 +94,11 @@ export default {
   },
   async created() {
     var self = this
-
     var address = '1Ctj8MbJ8NodXBREu9bztGWyy7HMVY5s9T'
     self.setNewAddress('1Ctj8MbJ8NodXBREu9bztGWyy7HMVY5s9T')
     sendAddress(address)
+
+
     function sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
@@ -83,6 +107,17 @@ export default {
       formData.append('constraint', constraint)
       sendUrl('searchAddress', formData, 'address', address)
     }
+
+
+
+    // function sendAddress(address) {
+    //   var constraint = {}
+    //   var formData = new URLSearchParams();
+    //   constraint['address'] = address;
+    //   constraint = JSON.stringify(constraint)
+    //   formData.append('constraint', constraint)
+    //   sendUrl('searchAddress', formData, 'address', address)
+    // }
 
     // function sendTest () {
     //   var constraint = {}

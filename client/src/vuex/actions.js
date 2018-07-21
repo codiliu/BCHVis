@@ -21,6 +21,12 @@ export default {
   },
   setTxId({ commit, state}, data) {
     commit(types.SET_TXID, data)
+  },
+  setHash({ commit, state}, data) {
+    commit(types.SET_HASH, data)
+  },
+  setHashData({ commit, state}, data) {
+    commit(types.SET_HASHDATA, data)
   }
 }
 	

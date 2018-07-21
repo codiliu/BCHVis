@@ -7,4 +7,6 @@ export default {
     getTimeRange: state=>state.timeRange,
     getTimeRange: state=>state.timeRange,
     getTxId: state=>state.txId,
+    getHash: state=>state.hash,
+    getHashData: state=>state.hashData,
 }

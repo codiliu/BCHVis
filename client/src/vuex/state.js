@@ -6,5 +6,7 @@ const state = {
   selectedTx: null,
   txId: [],
   timeRange: [],
+  hash: null,
+  hashData: null,
 }
 export default state

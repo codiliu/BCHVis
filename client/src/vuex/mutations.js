@@ -25,6 +25,12 @@ export default {
   [types.SET_TIMERANGE] (state, timerange) {
     state.timeRange = timerange
   },
+  [types.SET_HASH] (state, hash) {
+    state.hash = hash
+  },
+  [types.SET_HASHDATA] (state, hashData) {
+    state.hashData = hashData
+  },
 }
 
 

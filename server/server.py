@@ -92,7 +92,7 @@ class addressHandler(tornado.web.RequestHandler):
           record={}
           record['inputs']=[]
           record['outputs']=[]
-          
+
           record['time']=float(index['time'])
 
 
@@ -173,6 +173,20 @@ class addressHandler(tornado.web.RequestHandler):
     #   self.write({'suc':'success'})
 
 
+class txidHandler(tornado.web.RequestHandler):
+    def post(self):
+      self.set_header('Access-Control-Allow-Origin','*')  # 添加响应头，允许指定域名的跨域请求
+      self.set_header("Access-Control-Allow-Headers", "X-Requested-With");  
+      self.set_header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
+      constraint=self.get_argument('constraint')
+      constraint = json.loads(constraint)
+      #print(constraint)
+      txid=constraint['txid']
+
+      txidData = get_page('http://35.201.193.149:9999/bch/api/viabtc/get_txs_by_layer/'+txid+'/3')['result']['msg']
+      self.write({'txidData': txidData})
+      print("Search " + str(txid))
+
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     print('server running at 127.0.0.1:%d ...'%(tornado.options.options.port))
@@ -181,6 +195,7 @@ if __name__ == "__main__":
         handlers=[
                   (r'/ws', wsHandler),
                   (r'/searchAddress', addressHandler),
+                  (r'/searchTxId', txidHandler),
                   # (r'/queryCarList', queryCarListHandler),
                   (r'/(.*)', tornado.web.StaticFileHandler, {'path': client_file_root_path,
                                                'default_filename': 'index.html'}) # fetch client files

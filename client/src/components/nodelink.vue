@@ -34,10 +34,17 @@ export default {
         addrData: 'getAddrData',
         newAddress: 'getNewAddress',
         timeRange: 'getTimeRange',
-        txList: 'getTxId'
+        txList: 'getTxId',
+        hashData: 'getHashData'
       })
   },
    watch: {
+    hashData: function(hashData){
+      var self = this
+      var newAddress = self.newAddress
+      console.log(hashData)
+      self.processDataHash(newAddress, hashData)
+    },
     txList: function(txList){
       var self = this
       var allData = self.deepCopy(self.addrData)  
@@ -63,7 +70,7 @@ export default {
       var newAddress = self.newAddress
       var txData = allData[newAddress]['txData']
       var addrData = allData[newAddress]['addrData']
-      var graphAddr=self.processDataAddr(newAddress, addrData) 
+      //var graphAddr=self.processDataAddr(newAddress, addrData) 
       var graphTx=self.processDataTx(newAddress, txData)
       self.drawGraph(graphTx)
 
@@ -72,45 +79,61 @@ export default {
       var self=this
       var temp={}
       var newAddress = self.newAddress
+      var allData = self.deepCopy(self.addrData)  
 
-      //console.log(self.addrData[newAddress]['txData'])
-
-      self.addrData[newAddress]['txData']['txs'].forEach(function(d){
+      var txData = allData[newAddress]['txData']
+      var addrData = allData[newAddress]['addrData']
+      //var graphAddr=self.processDataAddr(newAddress, addrData) 
+      var txs=[]
+      txData['txs'].forEach(function(d){
         if(timeRange[0]<=d.time && d.time<=timeRange[1]){
-          d.inputs.forEach(function(index){
-            var addr=index['addr']
-            if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
-            temp[addr]['sent']+=index['value']
-            temp[addr]['input_n']+=1
-            temp[addr]['tx_n']+=1
-          })
-
-          d.outputs.forEach(function(index){
-            var addr=index['addr']
-            if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
-            temp[addr]['received']+=index['value']
-            temp[addr]['output_n']+=1
-            temp[addr]['tx_n']+=1
-          })
-           
+          txs.push(d)
         }
       })
 
-      var addrData=[]
-      for(var index in temp){
-        temp[index]['balance'] = temp[index]['received']-temp[index]['sent']
-        addrData.push(temp[index])
-      }
+      txData['txs'] = txs
+      var graphTx=self.processDataTx(newAddress, txData)
+      self.drawGraph(graphTx)
 
-      var graph=self.processDataAddr(newAddress, addrData) 
-      self.drawGraph(graph)
+
+
+
+      // self.addrData[newAddress]['txData']['txs'].forEach(function(d){
+      //   if(timeRange[0]<=d.time && d.time<=timeRange[1]){
+      //     d.inputs.forEach(function(index){
+      //       var addr=index['addr']
+      //       if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
+      //       temp[addr]['sent']+=index['value']
+      //       temp[addr]['input_n']+=1
+      //       temp[addr]['tx_n']+=1
+      //     })
+
+      //     d.outputs.forEach(function(index){
+      //       var addr=index['addr']
+      //       if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
+      //       temp[addr]['received']+=index['value']
+      //       temp[addr]['output_n']+=1
+      //       temp[addr]['tx_n']+=1
+      //     })
+           
+      //   }
+      // })
+
+      // var addrData=[]
+      // for(var index in temp){
+      //   temp[index]['balance'] = temp[index]['received']-temp[index]['sent']
+      //   addrData.push(temp[index])
+      // }
+
+      // var graph=self.processDataAddr(newAddress, addrData) 
+      // self.drawGraph(graph)
       // console.log(addrData)
       // console.log(timeRange)
       // console.log(self.addrData)
     }
   },
   methods: {
-    ...mapActions(['setSelectRound', 'setNewAddress']),
+    ...mapActions(['setSelectRound', 'setNewAddress', 'setHash']),
     processDataAddr(target, addrData){
       var graph={"nodes":[], "links": []}
       var id=0
@@ -123,9 +146,78 @@ export default {
 
       addrData.forEach(function(d,i){
         graph['links'].push({"source": id, "target": i})
-        
       })
       return graph
+    },
+    processDataHash(target, hashData){
+      var self=this
+      var graph={"nodes":[], "links": []}
+      console.log(hashData)
+      var i=0
+      var count=0
+      for(var k in hashData){
+        var j=0
+
+        hashData[k].forEach(function(record){
+          graph['nodes'].push({"addr": 'flag', "name": "flag", "id": i, "txid": record['txid']})
+          var flagID=i
+          i+=1
+          console.log(record)
+
+          j=0
+          for(var addr in record['input_addrs']){
+            graph['nodes'].push({"addr": addr, "name": addr.substring(0,3), "id": i, "value": record['input_addrs'][addr], "txid":record['txid']})
+
+
+            console.log(111)
+            graph['links'].push({"source": i, "target": flagID})
+            i+=1
+            j+=1
+
+          }
+
+          j=0
+
+
+          for(var addr in record['output_addrs']){
+            
+            graph['nodes'].push({"addr": addr, "name": addr.substring(0,3), "id": i, "value": record['output_addrs'][addr], "txid":record['txid'],'nextid': record['next_txs'][j]})
+        
+            console.log(record['next_txs'][j])
+            console.log('count:', count)
+
+            count+=1
+            graph['links'].push({"source": flagID, "target": i})
+            i+=1
+            j+=1
+          }
+        })
+      }
+      
+      console.log('count:', count)
+      graph['nodes'].forEach(function(d, i){
+        //console.log(d)
+        if(d['nextid']){
+          console.log(d['nextid'])
+          graph['nodes'].forEach(function(temp, j){
+            if(temp['name']=='flag'&&temp['txid']==d['nextid']){
+              graph['links'].push({"source": i, "target": j})
+
+            }
+          })
+        }
+      })
+
+      self.drawGraph(graph)
+      // for(var index in hashData){
+      //   console.log(index)
+      // }
+
+
+      // hashData.forEach(function(d){
+      //   console.log(d)
+      // })
+      console.log(graph)
     },
     processDataTx(target, txData){
 
@@ -145,7 +237,7 @@ export default {
         var input_n=record['inputs'].length
         var output_n=record['outputs'].length
         if(true){
-          graph['nodes'].push({"addr": 'flag', "name": "flag", "id": i})
+          graph['nodes'].push({"addr": 'flag', "name": "flag", "id": i, "txid": record.txid})
           var core_id=i
 
           if(len>1)
@@ -155,13 +247,13 @@ export default {
           i+=1
           record['inputs'].forEach(function(d){
             graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i, "value": d.value, "txid": d.txid})
-            graph['links'].push({"source": core_id, "target": i})
+            graph['links'].push({"source": i, "target": core_id})
             i+=1
           })
 
           record['outputs'].forEach(function(d){
             graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i, "value": d.value, "txid": d.txid})
-            graph['links'].push({"source": i, "target": core_id})
+            graph['links'].push({"source": core_id, "target": i})
             i+=1
           })
           
@@ -420,7 +512,9 @@ export default {
           .on("click", function (d) {
             console.log(111)
             if(d.name=='flag'){
-              console.log(d)
+              // console.log(d)
+              // console.log(d.txid)
+              self.setHash(d.txid)
             }
             
           })    
