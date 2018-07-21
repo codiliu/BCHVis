@@ -44,28 +44,30 @@ export default {
   },
   mounted() {
     console.log('enter table')
+    
+
+    
   },
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
         newAddress: 'getNewAddress',
-        timeRange: 'getTimeRange',
-        txList: 'getTxId'
+        timeRange: 'getTimeRange'
       })
   },
    watch: {
-    txList: function(txList){
-      console.log('111', txList)
-    },
     addrData: function(allData) {
       var self = this
+      
       var newAddress = self.newAddress
 
       $('#title_left').text('#TXS: '+ allData[newAddress]['txData']['n_tx'])
       $('#title_middle').text('#ADDRS: '+ allData[newAddress]['addrData'].length)
 
+      
       var txData = allData[newAddress]['txData']
       var addrData = allData[newAddress]['addrData']
+
 
       self.drawTxs(txData)
       $(document).ready(function() {
@@ -86,6 +88,7 @@ export default {
              $(this).attr('class', 'unselected')
            }
         })
+
       })
       
       // $(document).ready(function() {
@@ -112,6 +115,9 @@ export default {
       //         } );
       //     } ).draw();
       // } );
+
+      
+      
     },
     timeRange: function(timeRange){
       var self=this
@@ -204,7 +210,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setSelectRound', 'setTxId']),
+    ...mapActions(['setSelectRound']),
     satoshi2BTC(str){
       str=String(str)
       var a = parseInt(str/100000000)
@@ -244,6 +250,9 @@ export default {
 
       $(document).ready(function() {
           $('#example').DataTable( {
+            
+            "info":false,
+              searching: false,
               data: dataSet,
               "scrollY": scrollY+'px',
               "paging": false,
@@ -278,14 +287,6 @@ export default {
       } );
     },
     drawTxs(data){
-
-      Array.prototype.remove = function(val) { 
-        var index = this.indexOf(val); 
-        if (index > -1) { 
-          this.splice(index, 1); 
-        } 
-      };
-
       var self = this
       var txData = data['txs']
       var len = txData.length
@@ -320,6 +321,8 @@ export default {
       var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
       $(document).ready(function() {
           $('#example').DataTable( {
+            searching: false,
+            "info":false,
               data: dataSet,
               "scrollY": scrollY+'px',
               "paging": false,
@@ -342,31 +345,17 @@ export default {
           $("#example > tbody > tr").attr("class","unselected")
           $("#example > tbody > tr").click(function(d,i){
 
-            var selectedId = $(this).find('td').eq(0).text()-1
-            var hash = data['txs'][selectedId]['hash']
+            console.log($(this).find('td').eq(0).text())
+    
+
 
             if($(this).attr("class")=="unselected"){
               $(this).css("background", "#addd8e")
               $(this).attr("class", "selected")
-
-
-
-              console.log(selectedId)
-              console.log(hash)
-              console.log()
-              self.txList.push(hash)
-
-              self.setTxId(self.txList)
             }
             else{
               $(this).css("background", "white")
               $(this).attr("class", "unselected")
-
-              self.txList.remove(hash)
-              self.txList.remove(hash)
-              self.txList.remove(hash)
-
-              self.setTxId(self.txList)
             }
           })
       } );
