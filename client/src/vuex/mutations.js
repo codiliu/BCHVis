@@ -12,6 +12,10 @@ export default {
     state.newAddress=newAddress
   },
 
+  [types.TXID] (state, txId) {
+    state.txId=txId
+  },
+
   [types.DEL_DATA] (state, addr) {
     delete(state.addrData[addr])
   },

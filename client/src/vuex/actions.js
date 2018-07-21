@@ -18,6 +18,9 @@ export default {
   },
   setTimeRange({ commit, state}, data) {
     commit(types.SET_TIMERANGE, data)
+  },
+  setTxId({ commit, state}, data) {
+    commit(types.SET_TXID, data)
   }
 }
 	

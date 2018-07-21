@@ -22,10 +22,20 @@ export default {
       address: ''
     }
   },
+  computed: {
+      ...mapGetters({
+        newAddress: 'getNewAddress'
+      })
+  },
   watch: {
     address: function(data) {
       console.log(data)
-    }
+
+      
+    },
+    newAddress: function(newAddress){
+      $('#input > input').attr('placeholder', newAddress)
+    },
   },
   methods: {
     ...mapActions(['setNewAddress']),

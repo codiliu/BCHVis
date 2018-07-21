@@ -12,12 +12,9 @@ import sys
 from tornado.options import define, options
 import tornado.websocket
 import json, ast
-import numpy as np
-from pymongo import  MongoClient
-
 # import frq_path_stat
 define("port", default=22068, type=int, help = "run on the given port")
-client = MongoClient('192.168.10.9',27066)
+
 os.path.join(os.path.split(__file__)[0],'./cython/arrContain/build/lib/')
 # the path to server html, js, css files
 client_file_root_path = os.path.join(os.path.split(__file__)[0],'../client')

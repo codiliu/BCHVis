@@ -279,6 +279,7 @@ export default {
 
     },
     drawGraph(graph){
+        var self=this
         $("#centerContainer").empty()
         const width = $("#centerContainer").width();
         const height = $("#centerContainer").height();
@@ -349,6 +350,8 @@ export default {
         node.append('circle')
           .attr('r', R)
           .on("click", function (d) {
+            
+            // self.setNewAddress(d.addr)
             console.log(d)
           })    
           .on('mouseover', fade(0.1))
