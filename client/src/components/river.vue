@@ -263,7 +263,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .axis text {
