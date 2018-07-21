@@ -14,50 +14,70 @@ export default {
     }
   },
   mounted() {
-    let path = '../../static/resource/bitcoin.json'
-    let self = this
-    d3.json(path, function(err, data) {
-      self.process(data['txData'])
-    })
+    // let path = '../../static/resource/bitcoin.json'
+    // let self = this
+    // d3.json(path, function(err, data) {
+    //   self.process(data['txData'])
+    // })
 
   },
   computed: {
     ...mapGetters({
       addrData: 'getAddrData',
       newAddress: 'getNewAddress',
-      selectedTx: 'getSelectedTx'
+      selectedTx: 'getSelectedTx',
+      timeRange: 'getTimeRange'
     })
   },
   watch: {
     addrData: function(data) {
       // this.allTxs = data['txData']
+      var self = this
+      console.log('river:', data)
+      self.process(data[self.newAddress]['txData']['txs'])
     },
     newAddress: function(data) {
       this.address = data
     },
     selectedTx: function(data) {
       console.log(data)
+    },
+    timeRange: function(timeRange){
+      var self=this
+      var newAddress = self.newAddress
+      var txs=[]
+      self.addrData[self.newAddress]['txData']['txs'].forEach(function(d){
+        if(timeRange[0]<=d.time && d.time<=timeRange[1])
+          txs.push(d)
+      })
+      console.log('txs: ', txs)
+      self.process(txs)
+      console.log()
     }
-
   },
   methods: {
     submit: function(data) {
       console.log(data)
     },
-    process: function(data) {
-      let address = data['address']
-      let txs = data['txs']
+    process: function(txs) {
+      console.log('river:', txs)
+
+      $("#riverview").empty() 
+
+
+      var self = this
+      let address = self.newAddress
       console.log('cc', txs)
       var W = $('#riverview').width(),
         H = $('#riverview').height()
 
       var svg = d3.select("#riverview").append('svg').attr('width', W * 5).attr('height', H),
-        margin = { top: 20, right: 20, bottom: 25, left: 50 },
+        margin = { top: 10, right: 20, bottom: 10, left: 20 },
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         viewg = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      let cw = 30
+      let cw = 18
       let middle = height / 2
       let middlespace = height * 0.05
       let cg = viewg.selectAll('.column')

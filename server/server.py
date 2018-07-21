@@ -63,14 +63,17 @@ def extractData(data):
             
         for te in index['out']:
             temp={}
-            
+            try:
+                temp['addr']=te['addr']
+            except:
+                continue
             try:
                 temp['addr_tag_link']=te['addr_tag_link']
             except:
                 temp['addr_tag_link']=""
             temp['spent']=te['spent']
             temp['tx_index']=te['tx_index']
-            temp['addr']=te['addr']
+            
             temp['value']=te['value']
             record['outputs'].append(temp)
         filterData['txs'].append(record)
@@ -81,21 +84,21 @@ def extractData(data):
 def get_page(url):
     user_agent_str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
     time.sleep(random.uniform(0,1))
-    return extractData(json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text))
+    return json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text)
 
 def filterData(address):
-    url = "https://blockchain.info/rawaddr/" + address
+    url = "http://123.207.75.151:9999/bch/api/viabtc/txs/get_all/" + address
     dataArr = get_page(url)
-    for i in range(1, 10000):
-        url = "https://blockchain.info/rawaddr/" + address +'?offset='
-        url += str(i*50)
-        data = get_page(url)
-        try:
-            if len(data['txs']) == 0:
-                break
-            dataArr['txs'].extend(data['txs'])
-        except: 
-            break
+    # for i in range(1, 10000):
+    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
+    #     url += str(i*50)
+    #     data = get_page(url)
+    #     try:
+    #         if len(data['txs']) == 0:
+    #             break
+    #         dataArr['txs'].extend(data['txs'])
+    #     except: 
+    #         break
     return dataArr
 
 
@@ -132,89 +135,97 @@ class addressHandler(tornado.web.RequestHandler):
       constraint = json.loads(constraint)
       #print(constraint)
       address=constraint['address']
+
       print("Search " + str(address))
 
-      data = filterData(address)
-      addr = []
-      addrAll = []
-      addrData={}
-      for index in data['txs']:
-          in_value=0
-          out_value=0
-          index['core_inputs_n']=0
-          index['core_outputs_n']=0
-          inputs_filter={}
-          outputs_filter={}
-          
-          # inputs_flag = True
-          # outputs_flag = True
-          for inputs in index['inputs']:
-            in_value+=inputs['value']
-            addrAll.append(inputs['addr'])
-            if inputs['addr'] not in addr:
-              addr.append(inputs['addr'])
-            if inputs['addr'] not in inputs_filter.keys():
-              inputs_filter[inputs['addr']]=inputs
-            else:
-              inputs_filter[inputs['addr']]['value']+=inputs['value']
-            if inputs['addr']=="1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z":
-              index['core_inputs_n']+=1
-            
-             
-          for outputs in index['outputs']:
-            out_value+=outputs['value']
-            addrAll.append(outputs['addr'])
-            if outputs['addr'] not in addr:
-              addr.append(outputs['addr'])
-            if outputs['addr'] not in outputs_filter.keys():
-              outputs_filter[outputs['addr']]=outputs
-            else:
-              outputs_filter[outputs['addr']]['value']+=outputs['value']
-              
-            if outputs['addr']=="1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z":
-              index['core_outputs_n']+=1
-          
-          index['inputs'] = list(inputs_filter.values())
-          #index['outputs'] = list(outputs_filter.values())
-          index['in_value']=in_value
-          index['out_value']=out_value
-          index['fee']=in_value - out_value
-          
-      i = 0
-      for index in data['txs']:
-        for inputs in index['inputs']:
-          if inputs['addr'] not in addrData.keys():
-              addrData[inputs['addr']]={'balance':0, "received":0,"sent":0,"tx_n":0,"input_n":0,"output_n":0,"tx_index":[]}
-          addrData[inputs['addr']]['sent']+=inputs['value']
-          addrData[inputs['addr']]['input_n']+=1
-          addrData[inputs['addr']]['tx_n']+=1
-          addrData[inputs['addr']]['tx_index'].append(i)
-                  
-        for outputs in index['outputs']:
-          if outputs['addr'] not in addrData.keys():
-              addrData[outputs['addr']]={'balance':0, "received":0,"sent":0,"tx_n":0,"input_n":0,"output_n":0,"tx_index":[]}
-          addrData[outputs['addr']]['received']+=outputs['value']
-          addrData[outputs['addr']]['output_n']+=1
-          addrData[outputs['addr']]['tx_n']+=1
-          addrData[outputs['addr']]['tx_index'].append(i)
-        i+=1
-
-      txData=[]
-      for index in addrData:
-        addrData[index]['balance'] = addrData[index]['received']-addrData[index]['sent']
-        addrData[index]['addr'] = index
-        txData.append(addrData[index])
-        # if index['fee']<0:
-        #   print(index['fee'])
-        #   print(index)
-        # print("***********")
-      #print(data)
-
-      # print(len(addrAll))
-      # print(len(addr))
       
-      print(data['n_tx'])
-      self.write({'txData': data, 'addrData': txData})
+
+      data = filterData(address)
+      print(len(data['result']['msg']))
+
+      # address='1MEPB525tEHRFLdq6aR8d2t8jaaRQj2iWX'
+      addrData={}
+      txData={}
+      txData['addr']=address
+      txData['n_tx']=len(data['result']['msg'])
+      
+      txData['received']=0
+      txData['sent']=0
+      txData['balance']=0
+      txData['txs']=[]
+      received=0
+      sent=0
+      balance=0
+      for index in data['result']['msg']:
+          record={}
+          record['inputs']=[]
+          record['outputs']=[]
+          record['time']=float(index['time'])
+          record['confirmations']=index['confirmations']
+          record['income']=float(index['income'])
+          record['txid']=index['txid']
+          record['hash']=index['txid']
+          balance+=float(index['income'])
+          record['in_value']=0
+          record['out_value']=0
+          for put in index['inputs']:
+              temp={}
+              temp['txid']=put['prev_txid']
+              temp['value']=float(put['prev_value'])
+              record['in_value']+=temp['value']
+          
+              temp['addr']=put['prev_addresses'][0]
+              if temp['addr'] == address:
+                  sent+=temp['value']
+                  
+              if temp['addr'] not in addrData:
+                  addrData[temp['addr']]={'addr': temp['addr'], 'sent': temp['value'], 'received': 0, 'balance': -temp['value'], 'input_n': 1, 'output_n': 0, 'tx_n': 1, 'txid': [record['txid']]}
+              else:
+                  addrData[temp['addr']]['sent']+=temp['value']
+                  addrData[temp['addr']]['balance']-=temp['value']
+                  addrData[temp['addr']]['input_n']+=1
+                  addrData[temp['addr']]['tx_n']+=1
+                  addrData[temp['addr']]['txid'].append(record['txid'])
+              record['inputs'].append(temp)
+       
+          for put in index['outputs']:
+              temp={}
+              temp['txid']=put['next_txid']
+              temp['value']=float(put['value'])
+              record['out_value']+=temp['value']
+
+              temp['addr']=put['addresses'][0]
+              if temp['addr'] == address:
+                  received+=temp['value']
+                  
+              if temp['addr'] not in addrData:
+                  addrData[temp['addr']]={'addr': temp['addr'], 'sent': 0, 'received': temp['value'], 'balance': temp['value'], 'input_n': 0, 'output_n': 1, 'tx_n': 1, 'txid': [record['txid']]}
+              else:
+                  addrData[temp['addr']]['received']+=temp['value']
+                  addrData[temp['addr']]['balance']+=temp['value']
+                  addrData[temp['addr']]['output_n']+=1
+                  addrData[temp['addr']]['tx_n']+=1
+                  addrData[temp['addr']]['txid'].append(record['txid'])
+                  
+              record['outputs'].append(temp)
+          
+          record['fee'] = record['in_value'] - record['out_value']
+
+          txData['txs'].append(record)
+ 
+      txData['received']=received
+      txData['sent']=sent
+      txData['balance']=received-sent
+
+      temp=[]
+      for index in addrData:
+          temp.append(addrData[index])
+
+
+      addrData=temp
+      #print(addrData['1MEPB525tEHRFLdq6aR8d2t8jaaRQj2iWX'])
+
+      self.write({'txData': txData, 'addrData': addrData})
       # with open('data.json', 'w') as f:
       #   json.dump({'txData': data, 'addrData': txData}, f)
 

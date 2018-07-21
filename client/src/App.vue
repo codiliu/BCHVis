@@ -8,13 +8,14 @@
       <timeline> </timeline>
     </div>
     <div id="graph">
-      <river> </river>
+      <nodelinkBox></nodelinkBox>
+      
     </div>
     <div id="table">
       <tableBox> </tableBox>
     </div>
     <div id="center">
-      <nodelinkBox></nodelinkBox>
+      <river> </river>
     </div>
   </div>
 </template>
@@ -48,7 +49,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['setAddData']),
+    ...mapActions(['setAddData', 'setNewAddress']),
     sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
@@ -71,9 +72,9 @@ export default {
   async created() {
     var self = this
 
-    var address = '1DUMifqLdCRvx6tAzafwDC2tKRntRAAm3z'
-
-    // sendAddress(address)
+    var address = '1JwgCVCnw8ziAnXA1c2VqUaMVkV4jtfDmw'
+    self.setNewAddress('1JwgCVCnw8ziAnXA1c2VqUaMVkV4jtfDmw')
+    sendAddress(address)
     function sendAddress(address) {
       var constraint = {}
       var formData = new URLSearchParams();
@@ -132,7 +133,7 @@ export default {
   #timeline {
     position: absolute;
     top: 10%;
-    left: 5%;
+    left: 0%;
     width: 65%;
     height: 20%;
     border: 1px solid grey;
@@ -140,28 +141,29 @@ export default {
   }
   #graph {
     position: absolute;
-    top: 31%;
-    left: 5%;
+    top: 51%;
+    left: 0%;
     width: 65%;
-    height: 68%;
+    height: 49%;
     border: 1px solid grey;
     border-radius: 5px;
+  }
+  #center{
+    position: absolute;
+    top: 31%;
+    left: 0%;
+    width: 65%;
+    height: 20%;
   }
   #table {
     /*background: green;*/
     position: absolute;
     top: 10%;
-    left: 70%;
-    width: 30%;
-    height: 50%;
+    left: 65%;
+    width: 35%;
+    height: 85%;
   }
-  #center{
-    position: absolute;
-    top: 60%;
-    left: 70%;
-    width: 30%;
-    height: 40%;
-  }
+  
 }
 
 </style>

@@ -7,7 +7,6 @@ export default {
     commit(types.ADD_DATA, data)
   },
   setNewAddress({ commit, state }, newAddress) {
-    console.log(newAddress)
     commit(types.NEW_ADDRESS, newAddress)
   },
   setDelData({ commit, state }, data) {
@@ -16,7 +15,9 @@ export default {
   },
   setSelectedTx({ commit, state}, data) {
     commit(types.SET_SELECTED_TX, data)
+  },
+  setTimeRange({ commit, state}, data) {
+    commit(types.SET_TIMERANGE, data)
   }
-
 }
 	

@@ -4,5 +4,6 @@ const state = {
   newAddress: null,
   loading: true,
   selectedTx: null,
+  timeRange: [],
 }
 export default state

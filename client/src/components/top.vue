@@ -3,8 +3,8 @@
     <Layout>
       <Header :style="{position: 'fixed', width: '100%'}">
         <Menu mode="horizontal" theme="dark" active-name="1">
-          <span style="font-family:PingFang SC;"> BitcoinVis </span>
-          <Input id='input' v-model="address" @keyup.enter.native="submit(address)" placeholder="Enter bitcoin address..." style="width: 400px"></Input>
+          <span style="font-family:PingFang SC;"> BCH Explorer </span>
+          <Input id='input' v-model="address" @keyup.enter.native="submit(address)" placeholder="Enter BCH address..." style="width: 400px"></Input>
         </Menu>
       </Header>
       <!--  <Footer class="layout-footer-center">2011-2016 &copy; TalkingData</Footer>

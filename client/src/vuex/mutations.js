@@ -18,4 +18,9 @@ export default {
   [types.SET_SELECTED_TX] (state, tx) {
     state.selectedTx = tx
   },
+  [types.SET_TIMERANGE] (state, timerange) {
+    state.timeRange = timerange
+  },
 }
+
+

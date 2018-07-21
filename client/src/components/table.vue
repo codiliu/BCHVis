@@ -12,7 +12,6 @@
       <table id="example" class="display" style="text-align:center;" border="0" cellpadding="0" cellspacing="0">
       </table>
     </div>
-    
     <!-- <div id="workloadDiv">
     </div>
     <div id="blockDiv">
@@ -52,25 +51,28 @@ export default {
   computed: {
       ...mapGetters({
         addrData: 'getAddrData',
-        newAddress: 'getNewAddress'
+        newAddress: 'getNewAddress',
+        timeRange: 'getTimeRange'
       })
   },
    watch: {
     addrData: function(allData) {
       var self = this
-      console.log('this.addrData', this.addrData)
-      console.log('this.newAddress', this.newAddress)
+      
+      var newAddress = self.newAddress
 
-      $('#title_left').text('#TXS: '+ allData[Object.keys(allData)[0]]['txData']['n_tx'])
-      $('#title_middle').text('#ADDRS: '+ allData[Object.keys(allData)[0]]['addrData'].length)
+      $('#title_left').text('#TXS: '+ allData[newAddress]['txData']['n_tx'])
+      $('#title_middle').text('#ADDRS: '+ allData[newAddress]['addrData'].length)
 
       
-      var txData = allData[Object.keys(allData)[0]]['txData']
-      var addrData = allData[Object.keys(allData)[0]]['addrData']
+      var txData = allData[newAddress]['txData']
+      var addrData = allData[newAddress]['addrData']
+
 
       self.drawTxs(txData)
       $(document).ready(function() {
         //$("#title button").attr('class', 'unselected')
+        $("#title button").unbind();
         $("#title button").click(function(){
            if($(this).attr('class')=='unselected'){
             $("#title button").attr('class', 'unselected')
@@ -117,6 +119,89 @@ export default {
       
       
     },
+    timeRange: function(timeRange){
+      var self=this
+      var newAddress = self.newAddress
+      var txs=[]
+      var txData = self.deepCopy(self.addrData[newAddress]['txData'])
+      var addrData = self.deepCopy(self.addrData[newAddress]['addrData'])
+
+      txData['txs'].forEach(function(d){
+        if(timeRange[0]<=d.time && d.time<=timeRange[1])
+          txs.push(d)
+      })
+      txData['n_tx']=txData['txs'].length
+
+      
+
+
+      var temp={}
+      self.addrData[newAddress]['txData']['txs'].forEach(function(d){
+        if(timeRange[0]<=d.time && d.time<=timeRange[1]){
+          d.inputs.forEach(function(index){
+            var addr=index['addr']
+            if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
+            temp[addr]['sent']+=index['value']
+            temp[addr]['input_n']+=1
+            temp[addr]['tx_n']+=1
+          })
+
+          d.outputs.forEach(function(index){
+            var addr=index['addr']
+            if(!temp[addr]) temp[addr]={'addr': addr, 'balance': 0, 'input_n': 0, 'output_n': 0, 'received': 0, 'sent': 0, 'tx_n': 0}
+            temp[addr]['received']+=index['value']
+            temp[addr]['output_n']+=1
+            temp[addr]['tx_n']+=1
+          })
+           
+        }
+      })
+
+
+
+      var addrData=[]
+      for(var index in temp){
+        temp[index]['balance'] = temp[index]['received']-temp[index]['sent']
+        addrData.push(temp[index])
+      }
+
+      txData['txs']=txs
+      txData['total_received'] = temp[newAddress]['received']
+      txData['total_sent'] = temp[newAddress]['sent']
+      txData['final_balance'] = temp[newAddress]['balance']
+
+      console.log('sent:', txData)
+      self.drawTxs(txData)
+
+
+      $('#title_left').text('#TXS: '+ txData['txs'].length)
+      $('#title_middle').text('#ADDRS: '+ addrData.length)
+
+
+      $(document).ready(function() {
+        //$("#title button").attr('class', 'unselected')
+        $("#title button").unbind();
+
+        $("#title button").click(function(){
+           if($(this).attr('class')=='unselected'){
+            $("#title button").attr('class', 'unselected')
+             $(this).attr('class', 'selected')
+             if($(this).attr('id')=='title_left'){
+              self.drawTxs(txData)
+             }
+             else if($(this).attr('id')=='title_middle'){
+              self.drawAddr(addrData)
+             }
+           }
+           else{
+             $(this).attr('class', 'unselected')
+           }
+        })
+
+      })
+
+
+    }
   },
   methods: {
     ...mapActions(['setSelectRound']),
@@ -124,7 +209,7 @@ export default {
       str=String(str)
       var a = parseInt(str/100000000)
       var b = str%100000000
-      return a+'. '+b+' btc'
+      return a+'. '+b+' bch'
     },
     drawAddr(data){
       var self = this
@@ -152,6 +237,8 @@ export default {
         //record.push(d['tx_n'])
         dataSet.push(record)
       })
+
+
 
       var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
 
@@ -195,12 +282,14 @@ export default {
       var txData = data['txs']
       var len = txData.length
 
+      console.log('sent:', txData)
+
       $('#tableDiv').empty()
       $('#tableDiv').html("<table id='example' class='display' style='text-align:center;' border='0' cellpadding='0' cellspacing='0'></table>")
 
-      var final_balance = self.satoshi2BTC(data['final_balance'])
-      var total_received = self.satoshi2BTC(data['total_received'])
-      var total_sent = self.satoshi2BTC(data['total_sent'])
+      var final_balance = self.satoshi2BTC(data['balance'])
+      var total_received = self.satoshi2BTC(data['received'])
+      var total_sent = self.satoshi2BTC(data['sent'])
       var n_txs = len
 
       
@@ -215,6 +304,10 @@ export default {
         record.push(d['hash'].substring(0,5)+"...")
         dataSet.push(record)
       })
+
+
+      console.log('table:', dataSet)
+
 
       var scrollY = parseInt($("#tableContainer").css('height').split('p')[0])-100
       $(document).ready(function() {
@@ -233,6 +326,7 @@ export default {
               "order": [[ 1, 'asc' ]]
           } );
 
+          console.log('sent: ', total_sent)
           var text = "<div style='float:left;text-align:left'><strong>Balance: "+final_balance+"<br>Received: "+total_received+"<br>Sent: "+total_sent+"<br>Txs: "+n_txs+"</strong></div>"
           $("#example_filter label").before(text)
 
@@ -265,6 +359,21 @@ export default {
       var sec = this.addZero(a.getSeconds())
       var time = year + '/' + month + '/' + date + ' ' + hour + ':' + min + ':' + sec 
       return time;
+    },
+    deepCopy: function(obj){
+        var str, newobj = obj.constructor === Array ? [] : {};
+        if(typeof obj !== 'object'){
+            return;
+        } else if(window.JSON){
+            str = JSON.stringify(obj), //系列化对象
+            newobj = JSON.parse(str); //还原
+        } else {
+            for(var i in obj){
+                newobj[i] = typeof obj[i] === 'object' ? 
+                cloneObj(obj[i]) : obj[i]; 
+            }
+        }
+        return newobj;
     },
     extractProcess(data, keyValue){
       var processData={}
