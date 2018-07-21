@@ -164,7 +164,6 @@ export default {
           i+=1
           console.log(record)
 
-          j=0
           for(var addr in record['input_addrs']){
             graph['nodes'].push({"addr": addr, "name": addr.substring(0,3), "id": i, "value": record['input_addrs'][addr], "txid":record['txid']})
 
@@ -172,16 +171,12 @@ export default {
             console.log(111)
             graph['links'].push({"source": i, "target": flagID})
             i+=1
-            j+=1
-
           }
-
-          j=0
 
 
           for(var addr in record['output_addrs']){
             
-            graph['nodes'].push({"addr": addr, "name": addr.substring(0,3), "id": i, "value": record['output_addrs'][addr], "txid":record['txid'],'nextid': record['next_txs'][j]})
+            graph['nodes'].push({"addr": addr, "name": addr.substring(0,3), "id": i, "value": record['output_addrs'][addr], "txid":record['txid'],'nextid': record['next_txs'][addr]})
         
             console.log(record['next_txs'][j])
             console.log('count:', count)
@@ -189,7 +184,6 @@ export default {
             count+=1
             graph['links'].push({"source": flagID, "target": i})
             i+=1
-            j+=1
           }
         })
       }
@@ -453,7 +447,7 @@ export default {
 
         simulation.force('link')
           .links(graph.links)
-          .distance([150]);
+          .distance([85]);
 
         const R = 10;
 
@@ -618,8 +612,8 @@ export default {
   height: 100%;
   border: 1px solid grey;
   .node circle {
-    fill: #acf;
-    stroke: #acf;
+    fill: #DDD;
+    stroke: #777;
     stroke-width: 2px;
   }
 
@@ -632,10 +626,10 @@ export default {
     -webkit-user-select: none;
   }
 
-  .link {/*
+  .link {
     stroke: #88A;
     stroke-width: 4px;  
-    opacity: 0.5;*/
+    opacity: 0.5;
   }  
   
   .node {

@@ -33,13 +33,20 @@ def get_page(url):
     return json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text)
 
 
-
-
-# def filterData(address):
-  
-   
-#     return get_all(address)
-
+def filterData(address):
+    url = "http://123.207.75.151:9999/bch/api/viabtc/txs/get_all/1MEPB525tEHRFLdq6aR8d2t8jaaRQj2iWX"
+    dataArr = get_page(url)
+    # for i in range(1, 10000):
+    #     url = "https://blockchain.info/rawaddr/" + address +'?offset='
+    #     url += str(i*50)
+    #     data = get_page(url)
+    #     try:
+    #         if len(data['txs']) == 0:
+    #             break
+    #         dataArr['txs'].extend(data['txs'])
+    #     except: 
+    #         break
+    return dataArr
 
 
 class wsHandler(tornado.web.RequestHandler):
@@ -72,7 +79,13 @@ class addressHandler(tornado.web.RequestHandler):
 
       
 
+      #print(get_all("1Ctj8MbJ8NodXBREu9bztGWyy7HMVY5s9T"))
+
       data = get_all(address)
+
+      #data = filterData(address)
+      #print(data)
+
       print(len(data['msg']))
 
       # address='1MEPB525tEHRFLdq6aR8d2t8jaaRQj2iWX'
@@ -93,6 +106,8 @@ class addressHandler(tornado.web.RequestHandler):
           record['inputs']=[]
           record['outputs']=[]
 
+          # print('***')
+          # print(index['time'])
           record['time']=float(index['time'])
 
 

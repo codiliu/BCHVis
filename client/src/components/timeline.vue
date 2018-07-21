@@ -95,10 +95,8 @@ export default {
       // ];
       // set the dimensions and margins of the graph
       var margin = {top: 20, right: 20, bottom: 20, left: 40},
-          // width = $('#view').width() - margin.left - margin.right,
-          // height = $('#view').height() - margin.top - margin.bottom;
-          width = $('#view').width(),
-          height = $('#view').height();
+          width = $('#view').width() - margin.left - margin.right,
+          height = $('#view').height() - margin.top - margin.bottom;
 
           // var margin = {top: 20, right: 20, bottom: 30, left: 40},
           //     width = 960 - margin.left - margin.right,
@@ -591,7 +589,7 @@ export default {
 #view {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 99%;
   /*overflow: scroll;*/
 }
 
@@ -603,15 +601,9 @@ export default {
 .tick line {
   stroke: #62D2E7;
 }
-.bar1  {
-  fill: #acf;
-  stroke: #acf;
-}
 rect  {
-  fill: #acf;
-  stroke: #acf;
-    /*fill: steelblue;*/
-  /*stroke: steelblue;*/
+  fill: steelblue;
+  stroke: steelblue;
 }
 .highlight {}
 

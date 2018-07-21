@@ -71,7 +71,7 @@ export default {
       var W = $('#riverview').width(),
         H = $('#riverview').height()
 
-      var svg = d3.select("#riverview").append('svg').attr('width', W).attr('height', H),
+      var svg = d3.select("#riverview").append('svg').attr('width', W * 5).attr('height', H),
         margin = { top: 10, right: 20, bottom: 10, left: 20 },
         width = svg.attr("width"),
         height = svg.attr("height") ,
@@ -263,7 +263,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  /*overflow: scroll;*/
+  overflow: scroll;
 }
 
 .axis text {
