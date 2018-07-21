@@ -77,9 +77,9 @@ export default {
         height = svg.attr("height") ,
         viewg = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      let cw = 18
+      let cw = 20
       let middle = height / 2
-      let middlespace = height * 0.05
+      let middlespace = height * 0.2
       let cg = viewg.selectAll('.column')
         .data(txs)
         .enter()
@@ -87,6 +87,7 @@ export default {
         .attr('transform', function(d, i) {
           return 'translate(' + cw * i + ',' + middle + ')'
         })
+        
       viewg.append('line')
         .attr('x1', 0)
         .attr('y1', middle)
