@@ -329,7 +329,7 @@ export default {
 
         simulation.force('link')
           .links(graph.links)
-          .distance([85]);
+          .distance([150]);
 
         const R = 10;
 
@@ -490,8 +490,8 @@ export default {
   height: 100%;
   border: 0px solid grey;
   .node circle {
-    fill: #DDD;
-    stroke: #777;
+    fill: #acf;
+    stroke: #acf;
     stroke-width: 2px;
   }
 
@@ -504,10 +504,10 @@ export default {
     -webkit-user-select: none;
   }
 
-  .link {
+  .link {/*
     stroke: #88A;
     stroke-width: 4px;  
-    opacity: 0.5;
+    opacity: 0.5;*/
   }  
   
   .node {

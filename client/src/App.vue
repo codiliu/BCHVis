@@ -145,7 +145,7 @@ export default {
     position: absolute;
     top: 20%;
     left: 10%;
-    width: 50%;
+    width: 40%;
     height: 80%;
     border: 0px solid grey;
     border-radius: 5px;
@@ -153,8 +153,8 @@ export default {
   #timeline {
     position: absolute;
     top: 20%;
-    left: 60%;
-    width: 30%;
+    left: 50%;
+    width: 40%;
     height: 20%;
     border: 0px solid grey;
     border-radius: 5px;
@@ -163,18 +163,26 @@ export default {
   #center{
     position: absolute;
     top: 40%;
-    left: 60%;
-    width: 25%;
+    left: 50%;
+    width: 40%;
     height: 30%;
   }
   #table {
     /*background: green;*/
     position: absolute;
     top: 70%;
-    left: 60%;
-    width: 25%;
+    left: 50%;
+    width: 40%;
     height: 30%;
   }
+  .bar1  {
+  fill: #337ab7;
+  stroke: #337ab7;
+}
+.bar2  {
+  fill: #e4575e;
+  stroke: #e4575e;
+}
 
  .header{
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
