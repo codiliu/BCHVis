@@ -43,9 +43,16 @@ export default {
       var txData = allData[newAddress]['txData']
       var addrData = allData[newAddress]['addrData']
 
-      var graph=self.processData(newAddress, addrData) 
-      console.log('graph:', graph)
-      self.drawGraph(graph)
+      var graphAddr=self.processDataAddr(newAddress, addrData) 
+      console.log('graphAddr:', graphAddr)
+      self.drawGraph(graphAddr)
+
+
+      console.log('txData: ', txData)
+     // var graphTx=self.processDataTx(newAddress, txData) 
+     //console.log('graphTx:', graphTx)
+      // self.drawGraph(graphAddr)
+
     },
     timeRange: function(timeRange){
       var self=this
@@ -81,7 +88,7 @@ export default {
         addrData.push(temp[index])
       }
 
-      var graph=self.processData(newAddress, addrData) 
+      var graph=self.processDataAddr(newAddress, addrData) 
       self.drawGraph(graph)
       // console.log(addrData)
       // console.log(timeRange)
@@ -89,14 +96,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setSelectRound']),
-    processData(target, addrData){
+    ...mapActions(['setSelectRound', 'setNewAddress']),
+    processDataAddr(target, addrData){
       var graph={"nodes":[], "links": []}
       var id=0
 
       console.log('nodelink: ', addrData)
       addrData.forEach(function(d,i){
-        graph['nodes'].push({"name": d.addr.substring(0,3), "id": i})
+        graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i})
         if(d.addr==target) id=i
       })
 
@@ -105,6 +112,23 @@ export default {
         
       })
       return graph
+    },
+    processDataTX(target, txData){
+      // var graph={"nodes":[], "links": []}
+      // var id=0
+
+      // console.log('nodelink: ', addrData)
+      // addrData.forEach(function(d,i){
+      //   graph['nodes'].push({"name": d.addr.substring(0,3), "id": i})
+      //   if(d.addr==target) id=i
+      // })
+
+      // addrData.forEach(function(d,i){
+      //   graph['links'].push({"source": id, "target": i})
+        
+      // })
+      // return graph
+      return 0
     },
     drawTest(graph){
      
@@ -324,6 +348,9 @@ export default {
 
         node.append('circle')
           .attr('r', R)
+          .on("click", function (d) {
+            console.log(d)
+          })    
           .on('mouseover', fade(0.1))
           .on('mouseout', fade(1))
           .call(d3.drag()

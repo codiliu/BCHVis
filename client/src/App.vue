@@ -72,8 +72,8 @@ export default {
   async created() {
     var self = this
 
-    var address = '1JwgCVCnw8ziAnXA1c2VqUaMVkV4jtfDmw'
-    self.setNewAddress('1JwgCVCnw8ziAnXA1c2VqUaMVkV4jtfDmw')
+    var address = '1Ctj8MbJ8NodXBREu9bztGWyy7HMVY5s9T'
+    self.setNewAddress('1Ctj8MbJ8NodXBREu9bztGWyy7HMVY5s9T')
     sendAddress(address)
     function sendAddress(address) {
       var constraint = {}

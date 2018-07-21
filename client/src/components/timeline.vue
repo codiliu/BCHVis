@@ -126,13 +126,22 @@ export default {
 
         // format the data
         data.forEach(function(d) {
-            d.time = new Date(d.time);
+            d.time = d.time;
             d.value = +d.value;
         });
 
         console.log('data:', data)
         // Scale the range of the data
-        x.domain(d3.extent(data, function(d) { return d.time; }));
+
+        var burshRange = d3.extent(data, function(d) { return d.time; })
+
+        burshRange[0] = parseInt(burshRange[0]/(24*3600*1000))*24*3600*1000
+
+        burshRange[1] = parseInt(burshRange[1]/(24*3600*1000))*24*3600*1000 + 24*3600*1000
+
+        console.log('burshRange:', burshRange)
+
+        x.domain(burshRange);
         y1.domain([10, d3.max(data, function(d) { return d.value; })]);
         y2.domain([0, d3.max(data, function(d) { return d.addr; })]);
 
@@ -215,7 +224,7 @@ export default {
 
         var xAxis=d3.axisBottom(x)
                     .tickFormat((d,i)=>{
-                      return all(d)
+                      // return all(d)
                       var ticks = xAxis.scale().ticks();
                       
                       if (i == 0) {
