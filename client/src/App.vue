@@ -15,7 +15,7 @@
       <tableBox> </tableBox>
     </div>
     <div id="center">
-     <!--  <river> </river> -->
+      <river> </river>
     </div>
   </div>
 </template>
@@ -144,6 +144,7 @@ export default {
 </script>
 <style lang="less">
 #app {
+
   position: absolute;
   height: 100%;
   width: 100%;
@@ -161,43 +162,101 @@ export default {
       font-weight: bolder;
     }
   }
-  #top {
-    position: absolute;
-    left: 30%;
+  #nav {
+    position: fixed;
+     width: 90%;
+    /*text-align: center;*/
   }
-  #timeline {
+  #top {
+    top:13% ;
     position: absolute;
-    top: 10%;
-    left: 0%;
-    width: 65%;
-    height: 20%;
-    border: 1px solid grey;
-    border-radius: 5px;
+    text-align: center;
   }
   #graph {
     position: absolute;
-    top: 31%;
-    left: 0%;
-    width: 65%;
-    height: 69%;
-    border: 1px solid grey;
+    top: 20%;
+    left: 10%;
+    width: 40%;
+    height: 80%;
+    border: 0px solid grey;
     border-radius: 5px;
   }
+  #timeline {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 40%;
+    height: 20%;
+    border: 0px solid grey;
+    border-radius: 5px;
+  }
+
   #center{
     position: absolute;
-    top: 31%;
-    left: 0%;
-    width: 65%;
-    height: 20%;
+    top: 40%;
+    left: 50%;
+    width: 40%;
+    height: 30%;
   }
   #table {
     /*background: green;*/
     position: absolute;
-    top: 10%;
-    left: 65%;
-    width: 35%;
-    height: 85%;
+    top: 70%;
+    left: 50%;
+    width: 40%;
+    height: 30%;
   }
+  .bar1  {
+  fill: #337ab7;
+  stroke: #337ab7;
+}
+.bar2  {
+  fill: #e4575e;
+  stroke: #e4575e;
+}
+
+ .header{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+margin-left: 120px;
+            padding-right: 15px;
+            padding-left: 15px;
+            padding-bottom: 20px;
+            padding-top: 20px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+  .header h3{
+    
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 1.7em;
+            line-height: 40px;
+        }
+  .nav-pills li.active a, .nav-pills li.active a:focus, .nav-pills li.active a:hover {
+    text-decoration: none;
+    color: #fff;
+    background-color: #337ab7;
+}
+ .nav li a {
+
+    position: relative;
+    border-radius: 4px;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px;
+  }
+  a:-webkit-any-link {
+    text-decoration: none;
+    color: -webkit-link;
+    cursor: pointer;
+}
+li {
+  text-decoration: none;
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
   
 }
 
