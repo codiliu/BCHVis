@@ -15,7 +15,7 @@
       <tableBox> </tableBox>
     </div>
     <div id="center">
-      <river> </river>
+     <!--  <river> </river> -->
     </div>
   </div>
 </template>
@@ -141,10 +141,10 @@ export default {
   }
   #graph {
     position: absolute;
-    top: 51%;
+    top: 31%;
     left: 0%;
     width: 65%;
-    height: 49%;
+    height: 69%;
     border: 1px solid grey;
     border-radius: 5px;
   }

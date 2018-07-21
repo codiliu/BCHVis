@@ -13,6 +13,12 @@ from tornado.options import define, options
 import tornado.websocket
 import json, ast
 # import frq_path_stat
+
+from api_process import get_all
+
+
+
+
 define("port", default=22068, type=int, help = "run on the given port")
 
 os.path.join(os.path.split(__file__)[0],'./cython/arrContain/build/lib/')
@@ -26,10 +32,13 @@ def get_page(url):
     time.sleep(random.uniform(0,1))
     return json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text)
 
-def filterData(address):
-    url = "http://35.201.193.149:9999/bch/api/viabtc/txs/get_all/" + address
-    dataArr = get_page(url)
-    return dataArr
+
+
+
+# def filterData(address):
+  
+   
+#     return get_all(address)
 
 
 
@@ -63,14 +72,14 @@ class addressHandler(tornado.web.RequestHandler):
 
       
 
-      data = filterData(address)
-      print(len(data['result']['msg']))
+      data = get_all(address)
+      print(len(data['msg']))
 
       # address='1MEPB525tEHRFLdq6aR8d2t8jaaRQj2iWX'
       addrData={}
       txData={}
       txData['addr']=address
-      txData['n_tx']=len(data['result']['msg'])
+      txData['n_tx']=len(data['msg'])
       
       txData['received']=0
       txData['sent']=0
@@ -79,11 +88,14 @@ class addressHandler(tornado.web.RequestHandler):
       received=0
       sent=0
       balance=0
-      for index in data['result']['msg']:
+      for index in data['msg']:
           record={}
           record['inputs']=[]
           record['outputs']=[]
+          
           record['time']=float(index['time'])
+
+
           record['confirmations']=index['confirmations']
           record['income']=float(index['income'])
           record['txid']=index['txid']

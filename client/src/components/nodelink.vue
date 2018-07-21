@@ -33,26 +33,39 @@ export default {
       ...mapGetters({
         addrData: 'getAddrData',
         newAddress: 'getNewAddress',
-        timeRange: 'getTimeRange'
+        timeRange: 'getTimeRange',
+        txList: 'getTxId'
       })
   },
    watch: {
+    txList: function(txList){
+      var self = this
+      var allData = self.deepCopy(self.addrData)  
+  
+      var newAddress = self.newAddress
+      var txData = allData[newAddress]['txData']
+
+
+
+      var txs=[]
+      txData['txs'].forEach(function(d){
+        if(txList.indexOf(d['txid'])!=-1){
+          txs.push(d)
+        }
+      })
+      txData['txs']=txs
+      var graphTx=self.processDataTx(newAddress, txData)
+      self.drawGraph(graphTx)
+
+    },
     addrData: function(allData) {
       var self = this
       var newAddress = self.newAddress
       var txData = allData[newAddress]['txData']
       var addrData = allData[newAddress]['addrData']
-
       var graphAddr=self.processDataAddr(newAddress, addrData) 
-      console.log('graphAddr:', graphAddr)
-      self.drawGraph(graphAddr)
-
-
-      console.log('txData: ', txData)
       var graphTx=self.processDataTx(newAddress, txData)
-      //self.drawGraph(graphTx)
-     //console.log('graphTx:', graphTx)
-      // self.drawGraph(graphAddr)
+      self.drawGraph(graphTx)
 
     },
     timeRange: function(timeRange){
@@ -115,25 +128,28 @@ export default {
       return graph
     },
     processDataTx(target, txData){
-      console.log(11, txData)
-      console.log('111', txData)
 
       var graph={"nodes":[], "links": []}
       var id=0
 
+      var len=txData['txs'].length
+
+      if(len>1)
+        graph['nodes'].push({"addr": 'core', "name": "core", "id": 0})
+
+
       var i=1
+      
       txData['txs'].forEach(function(record){
         console.log(record)
         var input_n=record['inputs'].length
         var output_n=record['outputs'].length
         if(true){
           graph['nodes'].push({"addr": 'flag', "name": "flag", "id": i})
-
-          
-
           var core_id=i
 
-          graph['links'].push({"source": 0, "target": core_id})
+          if(len>1)
+            graph['links'].push({"source": 0, "target": core_id})
 
 
           i+=1
@@ -167,7 +183,6 @@ export default {
 
     },
     drawTest(graph){
-     
           $("#centerContainer").empty()
           const width = $("#centerContainer").width();
           const height = $("#centerContainer").height();
@@ -213,6 +228,8 @@ export default {
                   .attr("r", 5)
                   .style("fill", function (d) { return color(d.group); })
                   .on("click", function (d) {
+
+
                       d.fixed = true;
                   })
                   .call(d3cola.drag);
@@ -232,6 +249,21 @@ export default {
           //});
 
 
+    },
+    deepCopy: function(obj){
+        var str, newobj = obj.constructor === Array ? [] : {};
+        if(typeof obj !== 'object'){
+            return;
+        } else if(window.JSON){
+            str = JSON.stringify(obj), //系列化对象
+            newobj = JSON.parse(str); //还原
+        } else {
+            for(var i in obj){
+                newobj[i] = typeof obj[i] === 'object' ? 
+                cloneObj(obj[i]) : obj[i]; 
+            }
+        }
+        return newobj;
     },
     drawTree(graph){
       $("#centerContainer").empty()
@@ -323,7 +355,7 @@ export default {
         const simulation = d3.forceSimulation()
           .nodes(graph.nodes)
           .force('link', d3.forceLink().id(d => d.id))
-          .force('charge', d3.forceManyBody().strength([-250]))
+          .force('charge', d3.forceManyBody().strength([-30]))
           .force('center', d3.forceCenter(width / 2, height / 2))
           .on('tick', ticked);
 
@@ -386,9 +418,11 @@ export default {
         node.append('circle')
           .attr('r', R)
           .on("click", function (d) {
+            console.log(111)
+            if(d.name=='flag'){
+              console.log(d)
+            }
             
-            // self.setNewAddress(d.addr)
-            console.log(d)
           })    
           .on('mouseover', fade(0.1))
           .on('mouseout', fade(1))
