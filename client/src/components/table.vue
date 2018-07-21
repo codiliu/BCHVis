@@ -165,6 +165,12 @@ export default {
         addrData.push(temp[index])
       }
 
+      if(!temp[newAddress]) {
+        $('#tableDiv').empty()
+
+        return;
+      }
+
       txData['txs']=txs
       txData['total_received'] = temp[newAddress]['received']
       txData['total_sent'] = temp[newAddress]['sent']
@@ -332,7 +338,12 @@ export default {
 
           $("#example > tbody > tr").css("background", "white")
           $("#example > tbody > tr").attr("class","unselected")
-          $("#example > tbody > tr").click(function(d){
+          $("#example > tbody > tr").click(function(d,i){
+
+            console.log($(this).find('td').eq(0).text())
+    
+
+
             if($(this).attr("class")=="unselected"){
               $(this).css("background", "#addd8e")
               $(this).attr("class", "selected")

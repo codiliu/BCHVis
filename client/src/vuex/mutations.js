@@ -12,7 +12,7 @@ export default {
     state.newAddress=newAddress
   },
 
-  [types.TXID] (state, txId) {
+  [types.SET_TXID] (state, txId) {
     state.txId=txId
   },
 

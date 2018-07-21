@@ -49,7 +49,8 @@ export default {
 
 
       console.log('txData: ', txData)
-     // var graphTx=self.processDataTx(newAddress, txData) 
+      var graphTx=self.processDataTx(newAddress, txData)
+      //self.drawGraph(graphTx)
      //console.log('graphTx:', graphTx)
       // self.drawGraph(graphAddr)
 
@@ -103,7 +104,7 @@ export default {
 
       console.log('nodelink: ', addrData)
       addrData.forEach(function(d,i){
-        graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i})
+        graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i, "value": d.value, "txid": d.txid})
         if(d.addr==target) id=i
       })
 
@@ -113,13 +114,47 @@ export default {
       })
       return graph
     },
-    processDataTX(target, txData){
-      // var graph={"nodes":[], "links": []}
-      // var id=0
+    processDataTx(target, txData){
+      console.log(11, txData)
+      console.log('111', txData)
 
+      var graph={"nodes":[], "links": []}
+      var id=0
+
+      var i=1
+      txData['txs'].forEach(function(record){
+        console.log(record)
+        var input_n=record['inputs'].length
+        var output_n=record['outputs'].length
+        if(true){
+          graph['nodes'].push({"addr": 'flag', "name": "flag", "id": i})
+
+          
+
+          var core_id=i
+
+          graph['links'].push({"source": 0, "target": core_id})
+
+
+          i+=1
+          record['inputs'].forEach(function(d){
+            graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i, "value": d.value, "txid": d.txid})
+            graph['links'].push({"source": core_id, "target": i})
+            i+=1
+          })
+
+          record['outputs'].forEach(function(d){
+            graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i, "value": d.value, "txid": d.txid})
+            graph['links'].push({"source": i, "target": core_id})
+            i+=1
+          })
+          
+        }
+      })
+      return graph
       // console.log('nodelink: ', addrData)
       // addrData.forEach(function(d,i){
-      //   graph['nodes'].push({"name": d.addr.substring(0,3), "id": i})
+      //   graph['nodes'].push({"addr": d.addr, "name": d.addr.substring(0,3), "id": i})
       //   if(d.addr==target) id=i
       // })
 
@@ -127,8 +162,9 @@ export default {
       //   graph['links'].push({"source": id, "target": i})
         
       // })
-      // return graph
-      return 0
+
+
+
     },
     drawTest(graph){
      

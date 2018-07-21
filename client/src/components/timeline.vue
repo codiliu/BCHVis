@@ -353,9 +353,17 @@ export default {
         }
         let xExtent = extent.map(x.invert)
         xExtent=[xExtent[0].getTime()/1000, xExtent[1].getTime()/1000]
-        var timeRange=d3.extent(data, function(d) { return d.time; })
-        if(xExtent[0]==xExtent[1])
-          xExtent=[timeRange[0].getTime()/1000, timeRange[1].getTime()/1000]
+
+        // xExtent)=d3.extent(data, function(d) { return d.time; })
+
+        // console.log(xExtent)
+        // console.log(console.log(xExtent))
+
+        if(xExtent[0]==xExtent[1]){
+          xExtent=d3.extent(data, function(d) { return d.time; })
+          console.log(burshRange)
+          xExtent=[burshRange[0]/1000, burshRange[1]/1000]
+        }
         
         self.setTimeRange(xExtent)
        

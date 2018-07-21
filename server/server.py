@@ -27,7 +27,7 @@ def get_page(url):
     return json.loads(requests.get(url, headers={"Connection":"keep-alive", "User-Agent": user_agent_str}).text)
 
 def filterData(address):
-    url = "http://123.207.75.151:9999/bch/api/viabtc/txs/get_all/" + address
+    url = "http://35.201.193.149:9999/bch/api/viabtc/txs/get_all/" + address
     dataArr = get_page(url)
     return dataArr
 
