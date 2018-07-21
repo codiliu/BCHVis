@@ -114,8 +114,8 @@ export default {
 
 
       var svg = d3.select("#view").append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
+          .attr("width", width )
+          .attr("height", height )
         .append("g")
           .attr("transform", 
                 "translate(" + margin.left + "," + margin.top + ")");
@@ -167,9 +167,9 @@ export default {
 
           
 
-          var div = d3.select("#view").append("div")
-              .attr("class", "tooltip")
-              .style("opacity", 0);
+          // var div = d3.select("#view").append("div")
+          //     .attr("class", "tooltip")
+          //     .style("opacity", 0);
 
           svg.selectAll(".bar1")
               .data(data)
@@ -590,7 +590,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 99%;
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .bar-line {
@@ -620,7 +620,7 @@ rect  {
   border-radius: 2px;
 }
 
-div.tooltip {
+/*div.tooltip {
   position: absolute;
   text-align: center;
   width: 60px;
@@ -631,7 +631,7 @@ div.tooltip {
   border: 0px;
   border-radius: 8px;
   pointer-events: none;
-}
+}*/
 /* Creates a small triangle extender for the tooltip */
 .d3-tip:after {
   box-sizing: border-box;

@@ -354,6 +354,7 @@ export default {
               console.log(selectedId)
               console.log(hash)
               console.log()
+              console.log(self.txList)
               self.txList.push(hash)
 
               self.setTxId(self.txList)

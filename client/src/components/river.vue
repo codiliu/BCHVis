@@ -73,8 +73,8 @@ export default {
 
       var svg = d3.select("#riverview").append('svg').attr('width', W * 5).attr('height', H),
         margin = { top: 10, right: 20, bottom: 10, left: 20 },
-        width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom,
+        width = svg.attr("width"),
+        height = svg.attr("height") ,
         viewg = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
       let cw = 18
